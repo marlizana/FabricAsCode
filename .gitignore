@@ -1,0 +1,10 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log*
+override.tf
+override.tf.json
+terraform.tfvars
+*.tfplan
+
+# .terraform.lock.hcl se commitea a proposito para fijar versiones de providers.

@@ -1,0 +1,18 @@
+# Copiar a terraform.tfvars (ignorado por git) y ajustar los valores.
+# Nunca poner credenciales aqui: la autenticacion de los providers azurerm,
+# azuread y fabric viene siempre de variables de entorno (ver README.md).
+
+capacity_name = "fbcventas"
+capacity_sku  = "F32"
+region        = "westeurope"
+template      = "medallion-cicd"
+project_name  = "ventas"
+
+# capacity_admin_members  = ["<entra-object-id-o-upn>"]  # por defecto: la identidad que ejecuta Terraform
+# ad_group_owners         = ["<entra-object-id>"]         # por defecto: la identidad que ejecuta Terraform
+# randomize_capacity_name = true                          # activar solo si "fbcventas" ya existe globalmente
+
+tags = {
+  managed_by = "terraform"
+  project    = "ventas"
+}
