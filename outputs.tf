@@ -22,3 +22,13 @@ output "ad_group_object_ids" {
   description = "Mapa '<layer>-<env>-<role>' -> object ID del grupo AD (36 entradas para medallion-cicd)."
   value       = one(module.medallion_cicd[*].ad_group_object_ids)
 }
+
+output "github_repository_url" {
+  description = "URL del repositorio GitHub de contenido Fabric, si enable_github_cicd esta activado."
+  value       = var.enable_github_cicd ? github_repository.fabric_content[0].html_url : null
+}
+
+output "github_repository_clone_url" {
+  description = "URL HTTPS para clonar el repositorio de contenido Fabric."
+  value       = var.enable_github_cicd ? github_repository.fabric_content[0].http_clone_url : null
+}

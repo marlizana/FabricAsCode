@@ -4,9 +4,10 @@ Terraform para provisionar infraestructura de Microsoft Fabric: una Fabric Capac
 (dado un nombre, sku y region) y, sobre esa capacity, una arquitectura de workspaces
 definida por un template.
 
-Alcance: solo infraestructura Terraform (capacity, workspaces, grupos de seguridad AD
-y sus role assignments). No incluye pipelines de CI/CD ni promocion de contenido entre
-workspaces.
+Alcance: infraestructura Terraform (capacity, workspaces, grupos de seguridad AD y sus
+role assignments) mas el bootstrap opcional de un repositorio GitHub y un workflow de
+GitHub Actions para promocionar contenido con `fabric-cicd`. No usa Fabric Deployment
+Pipelines.
 
 ## Templates disponibles
 
@@ -15,9 +16,17 @@ workspaces.
   (Admin, Contributor, Member, Viewer) vinculados a esa workspace mediante
   `fabric_workspace_role_assignment` (36 grupos y 36 role assignments en total).
 
+Cuando `enable_github_cicd = true`, Terraform crea un repositorio de contenido e
+inicializa en el branch `main`:
+
+- `.github/workflows/fabric-cicd.yml`, con despliegues por capa a `test` y `prod`.
+- `.github/scripts/deploy.py`, que ejecuta `fabric-cicd`.
+- `fabric-content/<layer>/parameter.yml`, para bindings especificos de cada entorno.
+
 ## Prerequisitos
 
 - Terraform >= 1.8
+- Python 3.9-3.13 para ejecutar `fabric-cicd`.
 - Suscripcion de Azure con cuota disponible para Fabric Capacity en la region elegida
 - Tenant de Entra ID
 - Un Service Principal con:
@@ -37,6 +46,9 @@ ARM_CLIENT_ID
 ARM_CLIENT_SECRET
 ARM_TENANT_ID
 ARM_SUBSCRIPTION_ID
+
+# Solo si enable_github_cicd = true
+GITHUB_TOKEN
 ```
 
 Estas mismas cubren la autenticacion por defecto de `azurerm` y `azuread`. El
@@ -44,6 +56,9 @@ provider `fabric` (microsoft/fabric) soporta variables equivalentes (por ejemplo
 `FABRIC_CLIENT_ID` / `FABRIC_CLIENT_SECRET` / `FABRIC_TENANT_ID`) ademas de Azure CLI,
 OIDC y managed identity; confirmar los nombres exactos contra la version instalada
 del provider en `terraform init` / su documentacion.
+
+El provider `github` lee `GITHUB_TOKEN` del entorno. El token debe poder crear el
+repositorio y sus archivos iniciales.
 
 ## Uso
 
@@ -54,6 +69,49 @@ cp terraform.tfvars.example terraform.tfvars   # editar valores, nunca commitear
 terraform plan
 terraform apply
 ```
+
+Con `enable_github_cicd = true`, el repositorio creado se muestra en el output
+`github_repository_url`. Terraform siembra el workflow y los archivos de bootstrap,
+pero no crea automaticamente items Fabric: las definiciones de notebooks, lakehouses,
+pipelines y demas artefactos deben guardarse bajo `fabric-content/`.
+
+## Flujo GitHub Actions con fabric-cicd
+
+El workflow no usa Deployment Pipelines de Fabric. Cada ejecucion despliega las tres
+capas en paralelo a `test` y, solo si todas terminan correctamente, continua a `prod`.
+El Environment `prod` de GitHub debe configurarse con aprobadores obligatorios si se
+requiere aprobacion manual antes de produccion.
+
+Crear estos secrets en el repositorio de contenido:
+
+```
+FABRIC_TENANT_ID
+FABRIC_CLIENT_ID
+FABRIC_CLIENT_SECRET
+```
+
+Crear tambien la repository variable `FABRIC_PROJECT_NAME` con el mismo valor que
+`project_name`, por ejemplo `ventas`. El Service Principal necesita acceso a los seis
+workspaces `test` y `prod` que recibiran los despliegues.
+
+### Conexion de los workspaces dev a GitHub
+
+La conexion inicial de GitHub se completa desde Fabric para cada workspace `dev`:
+
+1. Abrir el workspace `ventas-bronze-dev`, `ventas-silver-dev` o `ventas-gold-dev`.
+2. Ir a **Workspace settings > Git integration**.
+3. Seleccionar GitHub, autorizar la cuenta/PAT y elegir el repositorio creado.
+4. Usar `main` y la carpeta correspondiente: `fabric-content/bronze`,
+   `fabric-content/silver` o `fabric-content/gold`.
+5. Repetir para las otras dos workspaces.
+
+Fabric no admite actualmente establecer esta conexion de GitHub de forma no interactiva
+con un Service Principal. Por eso Terraform crea y prepara el repositorio, pero esta
+primera vinculacion requiere una cuenta autorizada en Fabric.
+
+Las promociones posteriores se ejecutan exclusivamente desde GitHub Actions mediante
+`fabric-cicd`. Los bindings y referencias entre entornos deben declararse en cada
+`fabric-content/<layer>/parameter.yml`.
 
 Despliegue escalonado recomendado para el primer apply en un entorno nuevo:
 

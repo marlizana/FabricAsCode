@@ -18,6 +18,10 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
   }
 }
 
@@ -28,3 +32,7 @@ provider "azurerm" {
 provider "azuread" {}
 
 provider "fabric" {}
+
+provider "github" {
+  owner = var.github_owner
+}

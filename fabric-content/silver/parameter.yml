@@ -1,0 +1,3 @@
+# Add find_replace and binding rules for silver items here.
+# Keep environment-specific values out of the item definitions.
+find_replace: []

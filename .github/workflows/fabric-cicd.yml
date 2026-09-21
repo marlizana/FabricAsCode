@@ -1,0 +1,77 @@
+name: Fabric CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fabric-content/**"
+      - ".github/scripts/deploy.py"
+      - ".github/workflows/fabric-cicd.yml"
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: "Project prefix used by the Fabric workspace names"
+        required: true
+        type: string
+        default: "ventas"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fabric-cicd-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FABRIC_PROJECT_NAME: ${{ inputs.project_name || vars.FABRIC_PROJECT_NAME }}
+  AZURE_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+  AZURE_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+  AZURE_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+
+jobs:
+  deploy-test:
+    name: Deploy ${{ matrix.layer }} to test
+    runs-on: ubuntu-latest
+    environment: test
+    strategy:
+      fail-fast: false
+      matrix:
+        layer: [bronze, silver, gold]
+    steps:
+      - name: Checkout content
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install fabric-cicd
+        run: python -m pip install -r requirements.txt
+
+      - name: Deploy to test
+        run: python .github/scripts/deploy.py --layer "${{ matrix.layer }}" --environment test
+
+  deploy-prod:
+    name: Deploy ${{ matrix.layer }} to prod
+    needs: deploy-test
+    runs-on: ubuntu-latest
+    environment: prod
+    strategy:
+      fail-fast: false
+      matrix:
+        layer: [bronze, silver, gold]
+    steps:
+      - name: Checkout content
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install fabric-cicd
+        run: python -m pip install -r requirements.txt
+
+      - name: Deploy to prod
+        run: python .github/scripts/deploy.py --layer "${{ matrix.layer }}" --environment prod

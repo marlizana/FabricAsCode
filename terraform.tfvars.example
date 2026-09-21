@@ -8,6 +8,14 @@ region        = "westeurope"
 template      = "medallion-cicd"
 project_name  = "ventas"
 
+# Repositorio de contenido Fabric. Requiere GITHUB_TOKEN en el entorno.
+# La conexion Git de los workspaces dev se completa inicialmente desde Fabric
+# con una cuenta/PAT de GitHub; fabric-cicd se ejecuta despues desde Actions.
+enable_github_cicd      = true
+github_owner            = "<github-user-or-org>"
+github_repository_name  = "ventas-fabric-content"
+github_repository_visibility = "private"
+
 # capacity_admin_members  = ["<entra-object-id-o-upn>"]  # por defecto: la identidad que ejecuta Terraform
 # ad_group_owners         = ["<entra-object-id>"]         # por defecto: la identidad que ejecuta Terraform
 # randomize_capacity_name = true                          # activar solo si "fbcventas" ya existe globalmente

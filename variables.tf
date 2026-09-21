@@ -69,3 +69,42 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_github_cicd" {
+  description = "Crea el repositorio GitHub destinado al contenido Fabric y los workflows de fabric-cicd."
+  type        = bool
+  default     = false
+}
+
+variable "github_owner" {
+  description = "Usuario u organizacion de GitHub propietaria del repositorio de contenido Fabric."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.enable_github_cicd || can(regex("^[A-Za-z0-9-]+$", var.github_owner))
+    error_message = "github_owner es obligatorio cuando enable_github_cicd es true."
+  }
+}
+
+variable "github_repository_name" {
+  description = "Nombre del repositorio GitHub que alojara las definiciones de contenido Fabric."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.enable_github_cicd || can(regex("^[A-Za-z0-9_.-]+$", var.github_repository_name))
+    error_message = "github_repository_name es obligatorio cuando enable_github_cicd es true."
+  }
+}
+
+variable "github_repository_visibility" {
+  description = "Visibilidad del repositorio GitHub de contenido Fabric."
+  type        = string
+  default     = "private"
+
+  validation {
+    condition     = contains(["private", "public", "internal"], var.github_repository_visibility)
+    error_message = "github_repository_visibility debe ser private, public o internal."
+  }
+}

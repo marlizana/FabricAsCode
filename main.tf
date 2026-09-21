@@ -35,3 +35,41 @@ module "medallion_cicd" {
   capacity_id  = module.capacity.capacity_id
   group_owners = local.effective_group_owners
 }
+
+resource "github_repository" "fabric_content" {
+  count = var.enable_github_cicd ? 1 : 0
+
+  name        = var.github_repository_name
+  description = "Contenido de Microsoft Fabric desplegado con fabric-cicd."
+  visibility  = var.github_repository_visibility
+
+  has_issues      = true
+  has_projects    = false
+  has_wiki        = false
+  has_discussions = false
+  auto_init       = true
+}
+
+locals {
+  github_bootstrap_files = var.enable_github_cicd ? {
+    ".github/scripts/deploy.py"           = file("${path.module}/.github/scripts/deploy.py")
+    ".github/workflows/fabric-cicd.yml"   = file("${path.module}/.github/workflows/fabric-cicd.yml")
+    "requirements.txt"                    = file("${path.module}/requirements.txt")
+    "fabric-content/bronze/parameter.yml" = file("${path.module}/fabric-content/bronze/parameter.yml")
+    "fabric-content/silver/parameter.yml" = file("${path.module}/fabric-content/silver/parameter.yml")
+    "fabric-content/gold/parameter.yml"   = file("${path.module}/fabric-content/gold/parameter.yml")
+  } : {}
+}
+
+resource "github_repository_file" "bootstrap" {
+  for_each = local.github_bootstrap_files
+
+  repository          = github_repository.fabric_content[0].name
+  branch              = "main"
+  file                = each.key
+  content             = each.value
+  commit_message      = "Bootstrap Fabric CI/CD"
+  commit_author       = "Terraform"
+  commit_email        = "terraform@example.invalid"
+  overwrite_on_create = true
+}
