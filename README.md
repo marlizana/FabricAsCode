@@ -113,6 +113,9 @@ Las promociones posteriores se ejecutan exclusivamente desde GitHub Actions medi
 `fabric-cicd`. Los bindings y referencias entre entornos deben declararse en cada
 `fabric-content/<layer>/parameter.yml`.
 
+Para probar el despliegue completo, consultar la [guia de validacion paso a paso](docs/validation-guide.md),
+que incluye permisos, secrets, comprobaciones y criterios de aceptacion.
+
 Despliegue escalonado recomendado para el primer apply en un entorno nuevo:
 
 ```
