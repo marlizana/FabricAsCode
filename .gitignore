@@ -12,3 +12,6 @@ terraform.tfvars
 # demo.ps1: nombre del proyecto de la ultima sesion
 .demo-project
 .demo-qa
+# Workshop: datos de asistentes y credenciales
+environments/workshop.tfvars
+credenciales*.json
