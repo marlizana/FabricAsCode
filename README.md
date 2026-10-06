@@ -58,7 +58,13 @@ OIDC y managed identity; confirmar los nombres exactos contra la version instala
 del provider en `terraform init` / su documentacion.
 
 El provider `github` lee `GITHUB_TOKEN` del entorno. El token debe poder crear el
-repositorio y sus archivos iniciales.
+repositorio y sus archivos iniciales: con un PAT clasico, scopes `repo` **y `workflow`**
+(sin `workflow`, GitHub responde 404 al crear ficheros bajo `.github/workflows/`).
+
+En el admin portal de Fabric, ademas de "Service principals can use Fabric APIs", el
+ajuste **Workspace settings > Create workspaces** debe incluir al grupo del Service
+Principal; si no, `fabric_workspace` falla con `FeatureNotAvailable: Workspace creation
+is not enabled for the user`.
 
 ## Uso
 
