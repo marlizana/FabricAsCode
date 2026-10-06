@@ -108,3 +108,20 @@ variable "github_repository_visibility" {
     error_message = "github_repository_visibility debe ser private, public o internal."
   }
 }
+
+variable "budget_amount" {
+  description = "Presupuesto mensual en la moneda de la suscripcion. 0 desactiva el budget."
+  type        = number
+  default     = 0
+}
+
+variable "budget_contact_emails" {
+  description = "Correos que reciben las alertas del budget (50%, 80% y 100%)."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = var.budget_amount == 0 || length(var.budget_contact_emails) > 0
+    error_message = "budget_contact_emails es obligatorio cuando budget_amount > 0."
+  }
+}

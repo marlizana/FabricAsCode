@@ -137,6 +137,47 @@ Esto aisla dos riesgos conocidos antes de tocar las 9 workspaces y 36 grupos:
    entre ambos planos de control; si el primer apply falla en esa data source, un
    segundo `terraform apply` normalmente lo resuelve.
 
+## Demo de punta a punta (Terraform → fab → fabric-cicd)
+
+Las tres herramientas, cada una en lo suyo:
+
+| Capa | Herramienta | Qué hace en la demo |
+|---|---|---|
+| Infraestructura (declarativa) | Terraform | Capacity, 9 workspaces, 36 grupos, repo de contenido y budget |
+| Operación (imperativa) | Fabric CLI (`fab`) | Encender/pausar la capacity, ejecutar notebooks, ver tablas, OPTIMIZE |
+| Contenido (promoción) | fabric-cicd | Publicar lakehouses y notebooks de `fabric-content/` en test y prod |
+
+Contenido de ejemplo en `fabric-content/`:
+
+- `bronze/lh_bronze` + `nb_ingest_bronze`: genera ventas falsas en `sales_raw`.
+- `silver/lh_silver` + `nb_clean_silver`: deduplica y limpia hacia `sales`.
+
+Los notebooks no usan lakehouse por defecto ni IDs de entorno: resuelven sus
+lakehouses por nombre en el workspace donde se ejecutan, así que el mismo fichero
+funciona en dev, test y prod sin reglas en `parameter.yml`.
+
+### Orden
+
+```
+make init
+make capacity            # primer apply solo de la capacity
+make apply               # resto: workspaces, grupos, repo de contenido, budget
+# Conectar los 3 workspaces dev a GitHub (ver arriba) y en el repo de contenido:
+#   secrets FABRIC_TENANT_ID / FABRIC_CLIENT_ID / FABRIC_CLIENT_SECRET
+#   variables FABRIC_PROJECT_NAME y FABRIC_CAPACITY_NAME (terraform output -raw capacity_name)
+# Push a main -> fabric-cicd publica en test y, tras aprobar, en prod
+make run ENV=test        # fab job run de bronze y silver
+make tables ENV=test
+make pause               # SIEMPRE al acabar
+```
+
+El workflow `fabric-ops.yml` ofrece las mismas acciones desde la pestaña Actions
+y pausa la capacity cada noche a las 23:00 como red de seguridad.
+
+`environments/akanemar-demo.tfvars` es el entorno de demo (F2 en Spain Central, sin
+credenciales). Con `budget_amount > 0` se crea un budget mensual con alertas al 50,
+80 y 100 %.
+
 ## Extender con un nuevo template
 
 1. Crear `modules/templates/<nombre>/` con su propio `main.tf`/`variables.tf`/`outputs.tf`.

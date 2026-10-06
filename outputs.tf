@@ -32,3 +32,8 @@ output "github_repository_clone_url" {
   description = "URL HTTPS para clonar el repositorio de contenido Fabric."
   value       = var.enable_github_cicd ? github_repository.fabric_content[0].http_clone_url : null
 }
+
+output "capacity_name" {
+  description = "Nombre final de la capacity (con sufijo si randomize_capacity_name = true). Lo usa fab-ops.sh para pausar/reanudar."
+  value       = module.capacity.capacity_name
+}
