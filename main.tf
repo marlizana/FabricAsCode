@@ -3,9 +3,12 @@ data "azurerm_client_config" "current" {}
 data "azuread_client_config" "current" {}
 
 locals {
-  effective_capacity_admins = length(var.capacity_admin_members) > 0 ? (
-    var.capacity_admin_members
-  ) : [data.azurerm_client_config.current.object_id]
+  # La identidad que ejecuta Terraform siempre es admin de la capacity (la necesita
+  # para asignar workspaces); var.capacity_admin_members suma personas a esa lista.
+  effective_capacity_admins = distinct(concat(
+    var.capacity_admin_members,
+    [data.azurerm_client_config.current.object_id]
+  ))
 
   effective_group_owners = length(var.ad_group_owners) > 0 ? (
     var.ad_group_owners

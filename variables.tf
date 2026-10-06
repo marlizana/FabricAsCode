@@ -47,7 +47,7 @@ variable "project_name" {
 }
 
 variable "capacity_admin_members" {
-  description = "UPNs u object IDs con rol de administrador de la capacity. Si esta vacio, se usa la identidad que ejecuta Terraform."
+  description = "UPNs u object IDs con rol de administrador de la capacity, ademas de la identidad que ejecuta Terraform."
   type        = list(string)
   default     = []
 }
