@@ -154,6 +154,8 @@ variable "environments" {
     condition     = length(var.environments) == length(distinct(var.environments)) && alltrue([for e in var.environments : can(regex("^[a-z][a-z0-9]{1,9}$", e))])
     error_message = "environments: nombres unicos, en minusculas y sin guiones (ej. dev, qa)."
   }
+}
+
 # ---------- Template "workshop" ----------
 
 variable "workshop_attendees" {
