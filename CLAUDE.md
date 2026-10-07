@@ -63,8 +63,9 @@ Ultima actualizacion: 7/10/2026.
 
 ## Pendiente
 
-- [ ] Popkorn: secrets y variables en el repo de contenido, primer despliegue fabric-cicd a test/prod,
-      grabar Fabric as Code (7/10), Git Basics y Delta (8/10), enviar (9/10).
+- [x] Popkorn: secrets/variables en el repo de contenido, fabric-cicd a test y prod (run #8, 7/10)
+      y notebooks ejecutados en test con fab-ops `run` (run #4, 7/10).
+- [ ] Popkorn: grabar Fabric as Code (7/10), Git Basics y Delta (8/10), enviar (9/10).
 - [ ] NetCoreConf: decidir backend remoto del estado (slide 32), version del provider (~> 1.14) y si se publica el repo (QR slide 43).
 - [ ] NetCoreConf: estrenar `demo.ps1` (aun no ejecutado en Windows), slides desde
       `Slides/terraform-fabric-netcoreconf-madrid26.pptx`, ensayos 9/10, 15/10 y 21/10.
@@ -72,6 +73,12 @@ Ultima actualizacion: 7/10/2026.
       team es publico. Mail a asistentes 27/10, apply 2/11, prueba con 2 usuarios 4/11.
 - [ ] Limpieza: quitar el acceso elevado (Gmail y mar.lizana) y el Global Admin de la cuenta de Gmail.
 - [ ] 12/10: borrar la F2 olvidada en `sub-mvp-01` (otra suscripcion, MSDN) cuando se reactive.
+
+## Lecciones aprendidas
+
+- Ficheros que van al repo de contenido: siempre LF (`.gitattributes` + `replace()` en main.tf). Bash en el runner no admite CRLF.
+- `fab` en GitHub Actions: sin keyring, hay que `fab config set encryption_fallback_enabled true` y autenticar con `FAB_SPN_*`.
+- Re-run de un workflow usa el commit antiguo: para probar un arreglo, "Run workflow" de nuevo.
 
 ## Convenciones
 
