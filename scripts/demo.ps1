@@ -21,7 +21,9 @@
     reanuda      Reanuda la capacity
     pausa        Pausa la capacity ("y asi se deja de pagar")
 
-  Limpieza
+  Preparar y limpiar
+    prepara      Crea solo la capacity y el budget (antes de la charla; luego el plan da 81)
+    limpia       Borra workspaces, grupos y roles; deja capacity y budget (entre ensayos)
     destroy      Borra todo lo de esta sesion (capacity incluida)
 #>
 param([Parameter(Position = 0)][string]$Accion = "help")
@@ -161,6 +163,8 @@ switch ($Accion) {
   "estado"   { Capacity-Call "get" }
   "reanuda"  { Capacity-Call "resume" }
   "pausa"    { Capacity-Call "suspend" }
+  "prepara"  { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
+  "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
   "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs)); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
-  default    { Get-Content $PSCommandPath -TotalCount 30 | Select-Object -Skip 1 }
+  default    { Get-Content $PSCommandPath -TotalCount 33 | Select-Object -Skip 1 }
 }
