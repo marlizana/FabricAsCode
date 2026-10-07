@@ -78,7 +78,8 @@ resource "github_repository_file" "bootstrap" {
   repository          = github_repository.fabric_content[0].name
   branch              = "main"
   file                = each.key
-  content             = each.value
+  # En Windows git puede convertir a CRLF al hacer checkout; bash en el runner no lo admite.
+  content             = replace(each.value, "\r\n", "\n")
   commit_message      = "Bootstrap Fabric CI/CD"
   commit_author       = "Terraform"
   commit_email        = "terraform@example.invalid"
