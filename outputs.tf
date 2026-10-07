@@ -14,12 +14,12 @@ output "resource_group_name" {
 }
 
 output "workspace_ids" {
-  description = "Mapa '<layer>-<env>' -> Fabric workspace ID (9 entradas para medallion-cicd)."
+  description = "Mapa '<layer>-<env>' -> Fabric workspace ID."
   value       = one(module.medallion_cicd[*].workspace_ids)
 }
 
 output "ad_group_object_ids" {
-  description = "Mapa '<layer>-<env>-<role>' -> object ID del grupo AD (36 entradas para medallion-cicd)."
+  description = "Mapa '<layer>-<env>-<role>' -> object ID del grupo AD."
   value       = one(module.medallion_cicd[*].ad_group_object_ids)
 }
 

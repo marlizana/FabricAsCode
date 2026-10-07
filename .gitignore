@@ -8,3 +8,7 @@ terraform.tfvars
 *.tfplan
 
 # .terraform.lock.hcl se commitea a proposito para fijar versiones de providers.
+
+# demo.ps1: nombre del proyecto de la ultima sesion
+.demo-project
+.demo-qa

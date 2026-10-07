@@ -1,12 +1,9 @@
-# Capas, entornos y roles se fijan aqui como locals (no como variables
-# configurables): son la definicion misma de este template. Si se necesita
-# otra combinacion, eso es un template nuevo, no una variante de este.
+# Capas y entornos llegan como variables (por defecto bronze/silver/gold x
+# dev/test/prod): anadir "qa" es cambiar una lista, no copiar bloques.
+# Los roles siguen fijos: son la definicion de seguridad de este template.
 locals {
-  layers       = ["bronze", "silver", "gold"]
-  environments = ["dev", "test", "prod"]
-
   workspace_specs = {
-    for pair in setproduct(local.layers, local.environments) :
+    for pair in setproduct(var.layers, var.environments) :
     "${pair[0]}-${pair[1]}" => {
       domain = "${var.project_name}-${pair[0]}" # ej. "ventas-bronze"
       env    = pair[1]

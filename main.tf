@@ -35,6 +35,8 @@ module "medallion_cicd" {
   source = "./modules/templates/medallion-cicd"
 
   project_name = var.project_name
+  layers       = var.layers
+  environments = var.environments
   capacity_id  = module.capacity.capacity_id
   group_owners = local.effective_group_owners
 }

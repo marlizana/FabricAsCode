@@ -37,7 +37,9 @@ variable "template" {
 }
 
 variable "project_name" {
-  description = "Nombre del dominio/proyecto usado como prefijo de workspaces y grupos AD (ej. ventas)."
+  # Sin default a proposito: si no viene en el tfvars ni en TF_VAR_project_name,
+  # Terraform lo pregunta al hacer plan/apply. Todo se nombra a partir de el.
+  description = "Nombre del proyecto (ej. ventas, stocks). Prefijo de workspaces, grupos de Entra y budget."
   type        = string
 
   validation {
@@ -123,5 +125,27 @@ variable "budget_contact_emails" {
   validation {
     condition     = var.budget_amount == 0 || length(var.budget_contact_emails) > 0
     error_message = "budget_contact_emails es obligatorio cuando budget_amount > 0."
+  }
+}
+
+variable "layers" {
+  description = "Capas del medallion (template medallion-cicd)."
+  type        = list(string)
+  default     = ["bronze", "silver", "gold"]
+
+  validation {
+    condition     = length(var.layers) == length(distinct(var.layers)) && alltrue([for l in var.layers : can(regex("^[a-z][a-z0-9]{1,15}$", l))])
+    error_message = "layers: nombres unicos, en minusculas y sin guiones (ej. bronze)."
+  }
+}
+
+variable "environments" {
+  description = "Entornos (template medallion-cicd). Anadir \"qa\" crea sus workspaces y grupos en el siguiente apply."
+  type        = list(string)
+  default     = ["dev", "test", "prod"]
+
+  validation {
+    condition     = length(var.environments) == length(distinct(var.environments)) && alltrue([for e in var.environments : can(regex("^[a-z][a-z0-9]{1,9}$", e))])
+    error_message = "environments: nombres unicos, en minusculas y sin guiones (ej. dev, qa)."
   }
 }

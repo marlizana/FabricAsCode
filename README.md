@@ -184,6 +184,27 @@ y pausa la capacity cada noche a las 23:00 como red de seguridad.
 credenciales). Con `budget_amount > 0` se crea un budget mensual con alertas al 50,
 80 y 100 %.
 
+## Sesion «Y yo aqui creando workspaces a mano» (NetCoreConf)
+
+Todo desde `scripts/demo.ps1`, en Windows PowerShell 5.1 o 7, con estado propio
+(terraform workspace `netcoreconf`) y su propia capacity:
+
+```powershell
+. .\scripts\demo.ps1 env      # con punto: deja IDs y secretos en tu sesion
+.\scripts\demo.ps1 init
+.\scripts\demo.ps1 hola       # «cabe en un fichero .tf»: examples/01-hola-workspace
+.\scripts\demo.ps1 proyecto   # ¿como se llama el proyecto? ventas, stocks...
+.\scripts\demo.ps1 plan
+.\scripts\demo.ps1 apply
+.\scripts\demo.ps1 drift      # tras quitar un rol a mano en el portal
+.\scripts\demo.ps1 qa         # anade "qa" (una linea) y hace plan; luego apply
+.\scripts\demo.ps1 pausa      # y asi se deja de pagar
+.\scripts\demo.ps1 destroy
+```
+
+Capas y entornos son variables (`layers`, `environments`); `project_name` no tiene
+valor por defecto: si no lo das, Terraform lo pregunta.
+
 ## Extender con un nuevo template
 
 1. Crear `modules/templates/<nombre>/` con su propio `main.tf`/`variables.tf`/`outputs.tf`.

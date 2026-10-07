@@ -12,3 +12,13 @@ variable "group_owners" {
   description = "Object IDs que seran owners de los grupos AD creados para cada workspace."
   type        = list(string)
 }
+
+variable "layers" {
+  description = "Capas del medallion. Cada capa x entorno es una workspace."
+  type        = list(string)
+}
+
+variable "environments" {
+  description = "Entornos (ej. dev, test, qa, prod)."
+  type        = list(string)
+}
