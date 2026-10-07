@@ -25,8 +25,25 @@ project="${FABRIC_PROJECT_NAME:?Define FABRIC_PROJECT_NAME}"
 capacity="${FABRIC_CAPACITY_NAME:-}"
 
 login() {
+  # En el runner no hay keyring y fab no puede cifrar su cache de tokens (EncryptionFailed).
+  # El runner es efimero, asi que se permite la cache en claro.
+  [[ -n "${GITHUB_ACTIONS:-}" ]] && fab config set encryption_fallback_enabled true >/dev/null 2>&1
+  # Con las variables FAB_SPN_* fab se autentica solo, sin `fab auth login`.
   if [[ -n "${FABRIC_CLIENT_ID:-}" && -n "${FABRIC_CLIENT_SECRET:-}" && -n "${FABRIC_TENANT_ID:-}" ]]; then
-    fab auth login -u "$FABRIC_CLIENT_ID" -p "$FABRIC_CLIENT_SECRET" -t "$FABRIC_TENANT_ID" >/dev/null
+    export FAB_SPN_CLIENT_ID="$FABRIC_CLIENT_ID"
+    export FAB_SPN_CLIENT_SECRET="$FABRIC_CLIENT_SECRET"
+    export FAB_TENANT_ID="$FABRIC_TENANT_ID"
+  fi
+}
+
+# Ejecuta fab y, si falla, deja el error como anotacion de GitHub (se ve en el resumen del run).
+f() {
+  local out rc=0
+  out=$(fab "$@" 2>&1) || rc=$?
+  echo "$out"
+  if (( rc != 0 )); then
+    [[ -n "${GITHUB_ACTIONS:-}" ]] && echo "::error title=fab $1 $2::$(echo "$out" | tail -n 6 | tr '\n' ' ')"
+    return $rc
   fi
 }
 
@@ -41,32 +58,32 @@ login
 case "$action" in
   status)
     echo "== Capacities"
-    fab ls .capacities -l
+    f ls .capacities -l
     echo "== Workspaces de '${project}'"
-    fab ls -l -q "[?starts_with(name, '${project}-')]"
+    f ls -l -q "[?starts_with(name, '${project}-')]"
     ;;
   resume)
     need_capacity
-    fab start ".capacities/${capacity}.Capacity" -f
+    f start ".capacities/${capacity}.Capacity" -f
     ;;
   pause)
     need_capacity
     # Si ya estaba pausada fab devuelve error; no es un fallo para la pausa nocturna.
-    fab stop ".capacities/${capacity}.Capacity" -f || echo "La capacity ya estaba pausada (o no se pudo pausar: revisa el portal)."
+    f stop ".capacities/${capacity}.Capacity" -f || echo "La capacity ya estaba pausada (o no se pudo pausar: revisa el portal)."
     ;;
   run)
     echo "== $(ws bronze): nb_ingest_bronze"
-    fab job run "$(ws bronze)/nb_ingest_bronze.Notebook" --timeout 1200
+    f job run "$(ws bronze)/nb_ingest_bronze.Notebook" --timeout 1200
     echo "== $(ws silver): nb_clean_silver"
-    fab job run "$(ws silver)/nb_clean_silver.Notebook" --timeout 1200
+    f job run "$(ws silver)/nb_clean_silver.Notebook" --timeout 1200
     ;;
   tables)
-    fab ls "$(ws bronze)/lh_bronze.Lakehouse/Tables"
-    fab ls "$(ws silver)/lh_silver.Lakehouse/Tables"
+    f ls "$(ws bronze)/lh_bronze.Lakehouse/Tables"
+    f ls "$(ws silver)/lh_silver.Lakehouse/Tables"
     ;;
   optimize)
-    fab table optimize "$(ws bronze)/lh_bronze.Lakehouse/Tables/sales_raw" --vorder
-    fab table optimize "$(ws silver)/lh_silver.Lakehouse/Tables/sales" --vorder
+    f table optimize "$(ws bronze)/lh_bronze.Lakehouse/Tables/sales_raw" --vorder
+    f table optimize "$(ws silver)/lh_silver.Lakehouse/Tables/sales" --vorder
     ;;
   *)
     sed -n '2,20p' "$0"
