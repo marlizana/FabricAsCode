@@ -44,7 +44,8 @@ def main() -> None:
         parser.error("--project-name or FABRIC_PROJECT_NAME is required")
 
     repository_directory = os.path.join("fabric-content", args.layer)
-    parameter_file = os.path.join(repository_directory, "parameter.yml")
+    # Ruta absoluta: fabric-cicd >= 1.0 resuelve las rutas relativas contra repository_directory.
+    parameter_file = os.path.abspath(os.path.join(repository_directory, "parameter.yml"))
     workspace_name = f"{args.project_name}-{args.layer}-{args.environment}"
     print(f"::notice title=fabric-cicd::Desplegando {repository_directory} en '{workspace_name}'")
 
