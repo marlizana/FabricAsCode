@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import sys
 import traceback
@@ -20,7 +21,19 @@ ITEM_TYPES = [
 ]
 
 
+class GitHubAnnotationHandler(logging.Handler):
+    """Cada ERROR de fabric-cicd se convierte en una anotacion del run de GitHub Actions."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        msg = self.format(record).replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+        print(f"::error title=fabric-cicd ({record.name})::{msg[:1500]}", flush=True)
+
+
 def main() -> None:
+    handler = GitHubAnnotationHandler(level=logging.ERROR)
+    logging.getLogger().addHandler(handler)
+    logging.getLogger("fabric_cicd").addHandler(handler)
+
     parser = argparse.ArgumentParser(description="Deploy a Fabric layer with fabric-cicd.")
     parser.add_argument("--layer", choices=("bronze", "silver", "gold"), required=True)
     parser.add_argument("--environment", choices=("test", "prod"), required=True)
