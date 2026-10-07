@@ -55,10 +55,17 @@ Ultima actualizacion: 7/10/2026.
 - `feat/workshop-template` (PR #2, encima de #1): template `workshop`. Por asistente: usuario de
   Entra, workspace y repo privado. Mas un entorno `gitws-team` compartido. Ver `docs/workshop.md`.
 
+## Documentos de apoyo (Claude)
+
+- Guiones de grabacion DataPopkorn: https://claude.ai/code/artifact/2b5739de-9d11-43de-82f6-cacb33aded40
+- Guion NetCoreConf (escaleta, demo con demo.ps1, desajustes deck/repo, checklist): https://claude.ai/code/artifact/c62b2ba9-8527-4669-a14c-9103d2f1cc84
+- NetCoreConf es con Alfonso Ming (SRE @ SCRM). Deck: Slides/terraform-fabric-netcoreconf-madrid26.pptx (44 slides).
+
 ## Pendiente
 
 - [ ] Popkorn: secrets y variables en el repo de contenido, primer despliegue fabric-cicd a test/prod,
       grabar Fabric as Code (7/10), Git Basics y Delta (8/10), enviar (9/10).
+- [ ] NetCoreConf: decidir backend remoto del estado (slide 32), version del provider (~> 1.14) y si se publica el repo (QR slide 43).
 - [ ] NetCoreConf: estrenar `demo.ps1` (aun no ejecutado en Windows), slides desde
       `Slides/terraform-fabric-netcoreconf-madrid26.pptx`, ensayos 9/10, 15/10 y 21/10.
 - [ ] Workshop: decidir licencias Pro (trial autoservicio), MFA (security defaults) y si el repo
