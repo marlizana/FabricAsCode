@@ -128,6 +128,8 @@ switch ($Accion) {
     $env:ARM_CLIENT_SECRET = (Get-Clipboard).Trim(); $env:FABRIC_CLIENT_SECRET = $env:ARM_CLIENT_SECRET
     # Fabric CLI (fab) con el mismo service principal, sin "fab auth login"
     $env:FAB_SPN_CLIENT_ID = $ClientId; $env:FAB_SPN_CLIENT_SECRET = $env:ARM_CLIENT_SECRET; $env:FAB_TENANT_ID = $TenantId
+    # Fabric CLI (fab) con el mismo service principal, sin "fab auth login"
+    $env:FAB_SPN_CLIENT_ID = $ClientId; $env:FAB_SPN_CLIENT_SECRET = $env:ARM_CLIENT_SECRET; $env:FAB_TENANT_ID = $TenantId
     Read-Host "Copia el PAT de GitHub y pulsa Enter" | Out-Null
     $env:GITHUB_TOKEN = (Get-Clipboard).Trim()
     Set-Clipboard -Value "---"
