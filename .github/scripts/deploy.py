@@ -1,5 +1,7 @@
 import argparse
 import os
+import sys
+import traceback
 
 from azure.identity import DefaultAzureCredential
 from fabric_cicd import FabricWorkspace, publish_all_items, unpublish_all_orphan_items
@@ -31,6 +33,7 @@ def main() -> None:
     repository_directory = os.path.join("fabric-content", args.layer)
     parameter_file = os.path.join(repository_directory, "parameter.yml")
     workspace_name = f"{args.project_name}-{args.layer}-{args.environment}"
+    print(f"::notice title=fabric-cicd::Desplegando {repository_directory} en '{workspace_name}'")
 
     target = FabricWorkspace(
         workspace_name=workspace_name,
@@ -47,4 +50,13 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        traceback.print_exc()
+        # Anotacion visible en el resumen del run (y legible por la API sin descargar logs).
+        msg = f"{type(exc).__name__}: {exc}".replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+        print(f"::error title=fabric-cicd::{msg[:1500]}")
+        sys.exit(1)

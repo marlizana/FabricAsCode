@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
     inputs:
       project_name:
-        description: "Project prefix used by the Fabric workspace names"
-        required: true
+        description: "Prefijo de los workspaces (vacio = variable FABRIC_PROJECT_NAME)"
+        required: false
         type: string
-        default: "ventas"
+        default: ""
 
 permissions:
   contents: read
