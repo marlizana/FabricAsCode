@@ -34,6 +34,10 @@ Ultima actualizacion: 7/10/2026.
   - `Read-Host -MaskInput` no existe en 5.1, y pegar en `-AsSecureString` solo coge 1 caracter.
     Usar `(Get-Clipboard).Trim()`.
   - No hay `make` ni bash: usar `scripts/demo.ps1`.
+  - Terminal nueva = variables perdidas: `. .\scripts\demo.ps1 env` (con punto). Sin `GITHUB_TOKEN`
+    el plan cree que el repo privado no existe y propone recrearlo (17 to add): NO aplicar.
+  - Con la capacity pausada, el provider de Fabric no deja hacer plan/apply/destroy:
+    `reanuda` → plan/apply → `pausa`.
 
 ## Que hay desplegado ahora (estado local `default`, tfvars `environments/akanemar-demo.tfvars`)
 

@@ -99,12 +99,22 @@ function Capacity-Call($verb) {
   Require-Env
   $h = @{ Authorization = "Bearer $(Arm-Token)" }
   $uri = Capacity-Uri
-  if ($verb -eq "get") {
-    $c = Invoke-RestMethod -Headers $h -Uri "${uri}?api-version=2023-11-01"
-    Say "$($c.name): $($c.properties.state) ($($c.sku.name))" "Green"
-  } else {
+  $c = Invoke-RestMethod -Headers $h -Uri "${uri}?api-version=2023-11-01"
+  $state = $c.properties.state
+  if ($verb -eq "get") { Say "$($c.name): $state ($($c.sku.name))" "Green"; return }
+
+  $target = @{ resume = "Active"; suspend = "Paused" }[$verb]
+  if ($state -eq $target) { Say "$($c.name) ya esta $state. Nada que hacer." "Green"; return }
+  if ($state -notin @("Active", "Paused")) {
+    Say "$($c.name) esta en '$state' (cambiando de estado). Espera un minuto y prueba: .\scripts\demo.ps1 estado" "Yellow"
+    return
+  }
+  try {
     Invoke-RestMethod -Method Post -Headers $h -Uri "${uri}/${verb}?api-version=2023-11-01" | Out-Null
-    Say "Capacity: $verb solicitado. Tarda unos segundos." "Green"
+    Say "$($c.name): $verb solicitado (estaba $state). Tarda unos segundos; comprueba con: .\scripts\demo.ps1 estado" "Green"
+  } catch {
+    Say "Azure no acepta '$verb' ahora mismo (suele ser porque ya esta cambiando de estado). Espera un minuto y repite." "Yellow"
+    Write-Host $_.ErrorDetails.Message -ForegroundColor DarkGray
   }
 }
 
