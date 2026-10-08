@@ -65,7 +65,7 @@ Ultima actualizacion: 7/10/2026.
 
 - [x] Popkorn: secrets/variables en el repo de contenido, fabric-cicd a test y prod (run #8, 7/10)
       y notebooks ejecutados en test con fab-ops `run` (run #4, 7/10).
-- [ ] Popkorn: probar notebook Delta y Git integration (7/10 tarde), grabar los 3 (8/10, 9:30-13:00), enviar (9/10).
+- [ ] Popkorn: notebook Delta probado. Grabar los 3 y enviar el 9/10 (9:00-13:30). Ensayo 1 NetCoreConf movido al 9/10 16:00.
 - [ ] NetCoreConf: decidir backend remoto del estado (slide 32), version del provider (~> 1.14) y si se publica el repo (QR slide 43).
 - [ ] NetCoreConf: estrenar `demo.ps1` (aun no ejecutado en Windows), slides desde
       `Slides/terraform-fabric-netcoreconf-madrid26.pptx`, ensayos 9/10, 15/10 y 21/10.
