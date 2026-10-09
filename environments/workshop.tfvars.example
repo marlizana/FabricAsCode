@@ -1,0 +1,37 @@
+# Workshop de Git (4 h, 20-25 asistentes).
+# Copiar a environments/workshop.tfvars (NO commitear: lleva nombres y usuarios de GitHub).
+# Uso:
+#   terraform workspace new workshop   # estado separado de la demo
+#   terraform apply -var-file=environments/workshop.tfvars
+#   terraform output -json workshop_credentials > credenciales.json   # NO commitear
+#   ...workshop...
+#   terraform destroy -var-file=environments/workshop.tfvars
+
+capacity_name           = "fbcgitws"
+randomize_capacity_name = true
+# 25 personas guardando y sincronizando a la vez: F8 durante el taller y pausar al acabar.
+capacity_sku = "F8"
+region       = "spaincentral"
+
+template     = "workshop"
+project_name = "gitws" # -> gitws-01..gitws-25, gitws-team
+
+workshop_tenant_domain          = "akanemar.onmicrosoft.com"
+workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
+
+workshop_attendees = [
+  { name = "Asistente Uno", github_username = "github-user-1" },
+  { name = "Asistente Dos" }, # sin usuario de GitHub todavia: se anade luego y se re-aplica
+]
+
+# El repo de contenido de la demo no aplica al workshop.
+enable_github_cicd = false
+github_owner       = "marlizana"
+
+budget_amount         = 150
+budget_contact_emails = ["akanemar@gmail.com"]
+
+tags = {
+  managed_by = "terraform"
+  project    = "workshop-git"
+}

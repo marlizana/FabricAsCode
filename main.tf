@@ -50,6 +50,19 @@ module "medallion_cicd" {
   admin_members = local.admin_member_ids
 }
 
+module "workshop" {
+  count  = var.template == "workshop" ? 1 : 0
+  source = "./modules/templates/workshop"
+
+  prefix                 = var.project_name
+  attendees              = var.workshop_attendees
+  tenant_domain          = var.workshop_tenant_domain
+  capacity_id            = module.capacity.capacity_id
+  group_owners           = local.effective_group_owners
+  facilitator_object_ids = distinct(concat(var.workshop_facilitator_object_ids, local.admin_member_ids))
+  seed_dir               = "${path.module}/workshop/seed"
+}
+
 resource "github_repository" "fabric_content" {
   count = var.enable_github_cicd ? 1 : 0
 

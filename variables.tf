@@ -31,8 +31,8 @@ variable "template" {
   type        = string
 
   validation {
-    condition     = contains(["medallion-cicd"], var.template)
-    error_message = "template debe ser uno de los templates soportados: medallion-cicd."
+    condition     = contains(["medallion-cicd", "workshop"], var.template)
+    error_message = "template debe ser uno de los templates soportados: medallion-cicd, workshop."
   }
 }
 
@@ -154,4 +154,32 @@ variable "environments" {
     condition     = length(var.environments) == length(distinct(var.environments)) && alltrue([for e in var.environments : can(regex("^[a-z][a-z0-9]{1,9}$", e))])
     error_message = "environments: nombres unicos, en minusculas y sin guiones (ej. dev, qa)."
   }
+}
+
+# ---------- Template "workshop" ----------
+
+variable "workshop_attendees" {
+  description = "Asistentes del workshop (solo template = workshop)."
+  type = list(object({
+    name            = string
+    github_username = optional(string, "")
+  }))
+  default = []
+}
+
+variable "workshop_tenant_domain" {
+  description = "Dominio de Entra ID donde se crean los usuarios del workshop."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = var.template != "workshop" || var.workshop_tenant_domain != ""
+    error_message = "workshop_tenant_domain es obligatorio con template = workshop."
+  }
+}
+
+variable "workshop_facilitator_object_ids" {
+  description = "Object IDs de facilitadores con Admin en el workspace compartido."
+  type        = list(string)
+  default     = []
 }

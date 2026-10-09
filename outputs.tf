@@ -16,6 +16,8 @@ output "resource_group_name" {
 output "workspace_ids" {
   description = "Mapa '<layer>-<env>' -> Fabric workspace ID."
   value       = one(module.medallion_cicd[*].workspace_ids)
+  description = "Workspace IDs del template activo ('<layer>-<env>' en medallion-cicd, asistente en workshop)."
+  value       = coalesce(one(module.medallion_cicd[*].workspace_ids), one(module.workshop[*].workspace_ids))
 }
 
 output "ad_group_object_ids" {
@@ -36,4 +38,15 @@ output "github_repository_clone_url" {
 output "capacity_name" {
   description = "Nombre final de la capacity (con sufijo si randomize_capacity_name = true). Lo usa fab-ops.sh para pausar/reanudar."
   value       = module.capacity.capacity_name
+}
+
+output "workshop_credentials" {
+  description = "Credenciales de los asistentes (terraform output -json workshop_credentials)."
+  sensitive   = true
+  value       = one(module.workshop[*].credentials)
+}
+
+output "workshop_team_repo_url" {
+  description = "Repo colaborativo del workshop."
+  value       = one(module.workshop[*].team_repo_url)
 }
