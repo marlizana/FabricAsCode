@@ -31,13 +31,15 @@ variable "template" {
   type        = string
 
   validation {
-    condition     = contains(["medallion-cicd"], var.template)
-    error_message = "template debe ser uno de los templates soportados: medallion-cicd."
+    condition     = contains(["medallion-cicd", "workshop"], var.template)
+    error_message = "template debe ser uno de los templates soportados: medallion-cicd, workshop."
   }
 }
 
 variable "project_name" {
-  description = "Nombre del dominio/proyecto usado como prefijo de workspaces y grupos AD (ej. ventas)."
+  # Sin default a proposito: si no viene en el tfvars ni en TF_VAR_project_name,
+  # Terraform lo pregunta al hacer plan/apply. Todo se nombra a partir de el.
+  description = "Nombre del proyecto (ej. ventas, stocks). Prefijo de workspaces, grupos de Entra y budget."
   type        = string
 
   validation {
@@ -47,7 +49,13 @@ variable "project_name" {
 }
 
 variable "capacity_admin_members" {
-  description = "UPNs u object IDs con rol de administrador de la capacity. Si esta vacio, se usa la identidad que ejecuta Terraform."
+  description = "UPNs u object IDs con rol de administrador de la capacity, ademas de la identidad que ejecuta Terraform."
+  type        = list(string)
+  default     = []
+}
+
+variable "admin_group_members" {
+  description = "UPNs de personas que se anaden como miembros de TODOS los grupos Admin (sg-fbc-*-admin) que crea Terraform."
   type        = list(string)
   default     = []
 }
@@ -107,4 +115,71 @@ variable "github_repository_visibility" {
     condition     = contains(["private", "public", "internal"], var.github_repository_visibility)
     error_message = "github_repository_visibility debe ser private, public o internal."
   }
+}
+
+variable "budget_amount" {
+  description = "Presupuesto mensual en la moneda de la suscripcion. 0 desactiva el budget."
+  type        = number
+  default     = 0
+}
+
+variable "budget_contact_emails" {
+  description = "Correos que reciben las alertas del budget (50%, 80% y 100%)."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = var.budget_amount == 0 || length(var.budget_contact_emails) > 0
+    error_message = "budget_contact_emails es obligatorio cuando budget_amount > 0."
+  }
+}
+
+variable "layers" {
+  description = "Capas del medallion (template medallion-cicd)."
+  type        = list(string)
+  default     = ["bronze", "silver", "gold"]
+
+  validation {
+    condition     = length(var.layers) == length(distinct(var.layers)) && alltrue([for l in var.layers : can(regex("^[a-z][a-z0-9]{1,15}$", l))])
+    error_message = "layers: nombres unicos, en minusculas y sin guiones (ej. bronze)."
+  }
+}
+
+variable "environments" {
+  description = "Entornos (template medallion-cicd). Anadir \"qa\" crea sus workspaces y grupos en el siguiente apply."
+  type        = list(string)
+  default     = ["dev", "test", "prod"]
+
+  validation {
+    condition     = length(var.environments) == length(distinct(var.environments)) && alltrue([for e in var.environments : can(regex("^[a-z][a-z0-9]{1,9}$", e))])
+    error_message = "environments: nombres unicos, en minusculas y sin guiones (ej. dev, qa)."
+  }
+}
+
+# ---------- Template "workshop" ----------
+
+variable "workshop_attendees" {
+  description = "Asistentes del workshop (solo template = workshop)."
+  type = list(object({
+    name            = string
+    github_username = optional(string, "")
+  }))
+  default = []
+}
+
+variable "workshop_tenant_domain" {
+  description = "Dominio de Entra ID donde se crean los usuarios del workshop."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = var.template != "workshop" || var.workshop_tenant_domain != ""
+    error_message = "workshop_tenant_domain es obligatorio con template = workshop."
+  }
+}
+
+variable "workshop_facilitator_object_ids" {
+  description = "Object IDs de facilitadores con Admin en el workspace compartido."
+  type        = list(string)
+  default     = []
 }

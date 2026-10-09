@@ -1,0 +1,57 @@
+name: Fabric ops (fab CLI)
+
+# Botonera manual para la demo y para no quemar creditos:
+# encender/apagar la capacity, ejecutar los notebooks y revisar tablas,
+# todo con Fabric CLI desde Actions, sin portal.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Accion"
+        required: true
+        type: choice
+        options: [status, resume, pause, run, tables, optimize]
+        default: status
+      environment:
+        description: "Entorno (solo para run / tables / optimize)"
+        required: true
+        type: choice
+        options: [dev, test, prod]
+        default: test
+  schedule:
+    # Red de seguridad: pausa la capacity cada noche a las 23:00 (hora de Madrid en verano).
+    - cron: "0 21 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fabric-ops
+  cancel-in-progress: false
+
+jobs:
+  fab:
+    # Solo en repos configurados (evita que la pausa nocturna falle donde no hay secrets).
+    if: vars.FABRIC_CAPACITY_NAME != ''
+    runs-on: ubuntu-latest
+    env:
+      FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+      FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+      FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+      FABRIC_PROJECT_NAME: ${{ vars.FABRIC_PROJECT_NAME }}
+      FABRIC_CAPACITY_NAME: ${{ vars.FABRIC_CAPACITY_NAME }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install Fabric CLI
+        run: python -m pip install ms-fabric-cli
+
+      - name: Run fab-ops
+        run: |
+          action="${{ github.event_name == 'schedule' && 'pause' || inputs.action }}"
+          bash scripts/fab-ops.sh "$action" "${{ inputs.environment || 'test' }}"

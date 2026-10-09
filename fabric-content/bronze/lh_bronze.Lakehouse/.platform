@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Lakehouse",
+    "displayName": "lh_bronze",
+    "description": "Raw sales landing zone"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f2a1f8aa-1cc9-4ea7-b6b0-cbef4f218ec6"
+  }
+}
