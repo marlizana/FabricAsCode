@@ -11,15 +11,16 @@ output "credentials" {
   sensitive   = true
   value = {
     for k, a in local.attendees : k => {
-      name     = a.name
-      upn      = azuread_user.attendee[k].user_principal_name
-      password = random_password.attendee[k].result
-      repo     = github_repository.attendee[k].html_url
+      name      = a.name
+      upn       = azuread_user.attendee[k].user_principal_name
+      password  = random_password.attendee[k].result
+      workspace = fabric_workspace.attendee[k].display_name
+      repo      = var.create_repos ? github_repository.attendee[k].html_url : null
     }
   }
 }
 
 output "team_repo_url" {
   description = "Repo colaborativo."
-  value       = github_repository.team.html_url
+  value       = var.create_repos ? github_repository.team[0].html_url : null
 }

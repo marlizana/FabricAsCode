@@ -5,7 +5,7 @@ para eso está Git.
 
 ## Tus credenciales
 
-- Usuario de Fabric: el que te hemos dado en papel (`gitws-NN@akanemar.onmicrosoft.com`)
+- Usuario de Fabric: el que te hemos dado en papel (`userN-gitws@akanemar.onmicrosoft.com`)
 - Workspace de Fabric: se llama igual que este repo
 - Repo colaborativo: `gitws-team` (ahí trabajamos todas juntas al final)
 
@@ -36,7 +36,7 @@ para eso está Git.
 2. En Fabric, **Update all** y comprueba que el informe vuelve a como estaba.
 
 ### 6 · Trabajo en equipo (repo `gitws-team`)
-1. Conecta el workspace `gitws-team` al repo `gitws-team`. Una sola persona lo hace.
+1. Conecta el workspace `ws-gitws-team` al repo `gitws-team`. Una sola persona lo hace.
 2. Cada una crea su rama, cambia **su** página del informe y abre una PR.
 3. Revisamos y mergeamos juntas. `main` está protegida: sin PR aprobada no entra nada.
 4. Provocamos un conflicto a propósito y lo resolvemos.

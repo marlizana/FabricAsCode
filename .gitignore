@@ -15,3 +15,11 @@ terraform.tfvars
 # Workshop: datos de asistentes y credenciales
 environments/workshop.tfvars
 credenciales*.json
+
+# Configuracion del backend remoto (nombres del storage)
+backend.hcl
+
+# Datos locales que no van al repo publico
+scripts/demo.config.ps1
+personal.auto.tfvars
+CLAUDE.local.md

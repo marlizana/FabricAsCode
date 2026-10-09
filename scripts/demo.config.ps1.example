@@ -1,0 +1,5 @@
+﻿# Copiar a scripts\demo.config.ps1 (esta en .gitignore) y rellenar. Sin secretos:
+# el secret del service principal y el PAT se piden con ". .\scripts\demo.ps1 env".
+$TenantId       = "<tenant-id>"
+$SubscriptionId = "<subscription-id>"
+$ClientId       = "<client-id-del-service-principal>"
