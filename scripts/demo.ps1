@@ -168,13 +168,13 @@ switch ($Accion) {
     Write-Host "Ojo: hay que ejecutarlo con punto delante para que las variables se queden en tu sesion:  . .\scripts\demo.ps1 env" -ForegroundColor Yellow
   }
   "init" {
-    if (Test-Path (Join-Path $Root "backend.hcl")) { Tf @("init", "-backend-config=backend.hcl") } else { Tf @("init") }
+    if ((Test-Path (Join-Path $Root "backend.tf")) -and (Test-Path (Join-Path $Root "backend.hcl"))) { Tf @("init", "-backend-config=backend.hcl") } else { Tf @("init") }
     Tf @("workspace", "select", "-or-create", $TfWs)
     Say "Estado de Terraform: workspace '$TfWs'" "Green"
   }
   "migra-estado" {
     Require-Env
-    if (-not (Test-Path (Join-Path $Root "backend.hcl"))) { throw "Falta backend.hcl (copia backend.hcl.example)" }
+    if (-not (Test-Path (Join-Path $Root "backend.tf")) -or -not (Test-Path (Join-Path $Root "backend.hcl"))) { throw "Faltan backend.tf y backend.hcl (copia los .example)" }
     Say "Copia TODOS los estados locales (default, netcoreconf...) al storage. Responde yes." "Yellow"
     Tf @("init", "-backend-config=backend.hcl", "-migrate-state")
   }

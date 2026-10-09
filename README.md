@@ -68,22 +68,23 @@ is not enabled for the user`.
 
 ## Estado remoto
 
-El estado vive en un storage account de Azure (vale ADLS Gen2): `backend.tf` declara el
-backend `azurerm` y los nombres van en `backend.hcl`, que no se commitea.
+El estado puede vivir en un storage account de Azure (vale ADLS Gen2): `backend.tf.example`
+declara el backend `azurerm` y los nombres van en `backend.hcl`, que no se commitea.
 
 ```
+cp backend.tf.example backend.tf
 cp backend.hcl.example backend.hcl                       # rellenar
 terraform init -backend-config=backend.hcl
 terraform init -backend-config=backend.hcl -migrate-state   # solo si venias de estado local
 ```
 
 La identidad que ejecuta Terraform necesita **Storage Blob Data Contributor** sobre el
-storage. Para probar el repo sin storage, borra `backend.tf` y usa estado local.
+storage. Sin `backend.tf`, el estado es local.
 
 ## Uso
 
 ```
-terraform init -backend-config=backend.hcl
+terraform init        # con backend remoto: -backend-config=backend.hcl
 terraform validate
 cp terraform.tfvars.example terraform.tfvars   # editar valores, nunca commitear
 terraform plan
