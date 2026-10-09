@@ -39,6 +39,9 @@ $ErrorActionPreference = "Stop"
 $Root    = Split-Path -Parent $PSScriptRoot
 $VarFile = "environments/netcoreconf.tfvars"
 $TfWs    = "netcoreconf"
+# Pocas llamadas a la vez a Graph: con Global Secure Access (u otro tunel) las rafagas se cortan.
+# Sin tunel, sube a 8: $env:DEMO_PARALLELISM = 8
+$Par     = if ($env:DEMO_PARALLELISM) { $env:DEMO_PARALLELISM } else { 4 }
 $ProjectFile = Join-Path $Root ".demo-project"
 $QaFlag      = Join-Path $Root ".demo-qa"
 $QaVarFile   = "environments/netcoreconf-qa.tfvars"
@@ -193,18 +196,18 @@ switch ($Accion) {
     } finally { Pop-Location }
   }
   "proyecto" { Ask-Project; Say "Proyecto: $($env:TF_VAR_project_name)" "Yellow" }
-  "plan"     { Require-Env; Load-Project; Tf (@("plan") + (VarArgs)) }
-  "apply"    { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-parallelism=8")) }
+  "plan"     { Require-Env; Load-Project; Tf (@("plan") + (VarArgs) + @("-parallelism=$Par")) }
+  "apply"    { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-parallelism=$Par")) }
   "qa" {
     Require-Env; Load-Project
     Set-Content -Path $QaFlag -Value "qa"
     Say "El cambio es una linea:" "Yellow"
     Get-Content (Join-Path $Root $QaVarFile) | Where-Object { $_ -notmatch '^\s*#' -and $_.Trim() }
-    Tf (@("plan") + (VarArgs))
+    Tf (@("plan") + (VarArgs) + @("-parallelism=$Par"))
     Write-Host "Si te gusta: .\scripts\demo.ps1 apply" -ForegroundColor DarkGray
   }
   "sin-qa"   { Remove-Item $QaFlag -ErrorAction SilentlyContinue; Say "QA fuera: el siguiente apply borra sus workspaces." "Yellow" }
-  "drift"    { Require-Env; Load-Project; Say "¿Que ha cambiado alguien a mano?"; Tf (@("plan") + (VarArgs)) }
+  "drift"    { Require-Env; Load-Project; Say "¿Que ha cambiado alguien a mano?"; Tf (@("plan") + (VarArgs) + @("-parallelism=$Par")) }
   "estado"   { Capacity-Call "get" }
   "reanuda"  { Capacity-Call "resume" }
   "pausa"    { Capacity-Call "suspend" }
