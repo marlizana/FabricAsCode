@@ -8,7 +8,7 @@ Ultima actualizacion: 7/10/2026.
 
 | Fecha | Evento | Sesion | Estado |
 |---|---|---|---|
-| 23/10/2026 | NetCoreConf Madrid | «Y yo aqui creando workspaces a mano: Terraform al rescate para Fabric» (40 min, tono teletienda, Terraform desde cero) | Aceptada |
+| 23/10/2026 | NetCoreConf Madrid | «Y yo aqui creando workspaces a mano: Terraform al rescate para Fabric» (50 min segun Mar el 9/10, antes constaba 40: confirmar; tono teletienda, Terraform desde cero; hilo: dos encargos, medallion con permisos y workshop de 20 alumnos) | Aceptada |
 | 2/11/2026 | DataPopkorn | Fabric as Code · Git Basics for Microsoft Fabric · Your Delta Table Is Not a Table (3 x 5 min, en ingles, grabadas) | Aceptadas |
 | 5-7/11/2026 | DataSaturday Madrid | Workshop 4 h «Dime que commiteas y te dire quien eres» (Git para gente de Power BI) | Aceptado |
 | 5-7/11/2026 | DataSaturday Madrid | Cuando usar que. Principios de arquitectura en Fabric (50 min) | En evaluacion |
@@ -79,6 +79,11 @@ Ultima actualizacion: 7/10/2026.
 - Ficheros que van al repo de contenido: siempre LF (`.gitattributes` + `replace()` en main.tf). Bash en el runner no admite CRLF.
 - `fab` en GitHub Actions: sin keyring, hay que `fab config set encryption_fallback_enabled true` y autenticar con `FAB_SPN_*`.
 - Re-run de un workflow usa el commit antiguo: para probar un arreglo, "Run workflow" de nuevo.
+
+## Grupos Admin
+
+- `admin_group_members` (UPNs) entra en TODOS los grupos `sg-fbc-*-admin` y, en el template
+  workshop, como facilitadoras (Admin del workspace team). Hoy: mar.lizana y mingelmejor (Alfonso).
 
 ## Convenciones
 
