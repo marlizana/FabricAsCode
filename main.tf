@@ -59,7 +59,7 @@ module "workshop" {
   tenant_domain          = var.workshop_tenant_domain
   capacity_id            = module.capacity.capacity_id
   group_owners           = local.effective_group_owners
-  facilitator_object_ids = var.workshop_facilitator_object_ids
+  facilitator_object_ids = distinct(concat(var.workshop_facilitator_object_ids, local.admin_member_ids))
   seed_dir               = "${path.module}/workshop/seed"
 }
 
