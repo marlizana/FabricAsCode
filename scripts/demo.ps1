@@ -170,5 +170,5 @@ switch ($Accion) {
   "prepara"  { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
   "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
   "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs)); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
-  default    { Get-Content $PSCommandPath -TotalCount 33 | Select-Object -Skip 1 }
+  default    { $h = Get-Content $PSCommandPath; $end = [array]::IndexOf($h, "#>"); $h[1..($end - 1)] }
 }
