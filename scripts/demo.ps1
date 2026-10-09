@@ -221,7 +221,7 @@ switch ($Accion) {
     Say "Passwords en $TallerCreds (no se enseñan en pantalla, no se commitean)" "Yellow"
   }
   "prepara"  { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
-  "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
-  "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs)); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
+  "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd", "-parallelism=$Par")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
+  "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-parallelism=$Par")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
   default    { $h = Get-Content $PSCommandPath; $end = [array]::IndexOf($h, "#>"); $h[1..($end - 1)] }
 }
