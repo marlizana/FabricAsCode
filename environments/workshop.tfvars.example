@@ -14,7 +14,7 @@ capacity_sku = "F8"
 region       = "spaincentral"
 
 template     = "workshop"
-project_name = "gitws" # -> gitws-01..gitws-25, gitws-team
+project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-team
 
 workshop_tenant_domain          = "akanemar.onmicrosoft.com"
 workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
@@ -29,7 +29,7 @@ enable_github_cicd = false
 github_owner       = "marlizana"
 
 budget_amount         = 150
-budget_contact_emails = ["akanemar@gmail.com"]
+budget_contact_emails = ["tu-correo@ejemplo.com"]
 
 tags = {
   managed_by = "terraform"

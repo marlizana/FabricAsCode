@@ -1,4 +1,4 @@
-# Entorno de demo de Mar (tenant akanemar.onmicrosoft.com, suscripcion sub-creditos-mvp).
+# Entorno de demo de Mar (tenant akanemar.onmicrosoft.com).
 # Uso: terraform plan -var-file=environments/akanemar-demo.tfvars
 # Sin credenciales: ARM_* / FABRIC_* / GITHUB_TOKEN van en variables de entorno.
 
@@ -26,7 +26,7 @@ github_repository_visibility = "private"
 
 # Red de seguridad para los creditos MVP.
 budget_amount         = 150
-budget_contact_emails = ["akanemar@gmail.com"]
+# budget_contact_emails: en personal.auto.tfvars (no se commitea)
 
 tags = {
   managed_by = "terraform"

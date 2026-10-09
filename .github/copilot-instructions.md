@@ -1,1 +1,1 @@
-Lee y sigue `CLAUDE.md` en la raiz del repo: contexto del proyecto, entorno, estado desplegado, pendientes y convenciones.
+Lee y sigue `CLAUDE.md` en la raiz del repo y, si existe, `CLAUDE.local.md` (contexto privado: entorno, estado desplegado y pendientes).

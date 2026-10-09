@@ -52,9 +52,13 @@ function VarArgs {
   ,$a
 }
 
-$TenantId       = "bc6b1bb6-0e6c-4cc2-a2f4-b3603c4dd6a8"
-$SubscriptionId = "c52466ac-5cb2-4bd7-87e3-770ee8c4c12f"
-$ClientId       = "36341d06-ef04-4823-8fe8-075ee14b0908"
+# IDs del tenant, la suscripcion y el service principal: no son secretos, pero no van en
+# el repo publico. Copia scripts\demo.config.ps1.example a scripts\demo.config.ps1.
+$Config = Join-Path $PSScriptRoot "demo.config.ps1"
+if (Test-Path $Config) { . $Config }
+if (-not $TenantId -or -not $SubscriptionId -or -not $ClientId) {
+  throw "Falta scripts\demo.config.ps1 con `$TenantId, `$SubscriptionId y `$ClientId (copia demo.config.ps1.example)"
+}
 
 function Say($msg, $color = "Cyan") { Write-Host "`n>> $msg" -ForegroundColor $color }
 

@@ -1,0 +1,3 @@
+# Copiar a personal.auto.tfvars (esta en .gitignore). Terraform lo carga solo desde la raiz.
+# Datos personales que no deben ir en el repo publico.
+budget_contact_emails = ["tu-correo@ejemplo.com"]

@@ -4,11 +4,11 @@
 
 ## Qué se crea
 
-| Por asistente (`gitws-NN`) | Compartido (`gitws-team`) |
+| Por asistente (`userN`) | Compartido (`team`) |
 |---|---|
-| Usuario de Entra `gitws-NN@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-attendees` con todos |
-| Workspace Fabric `gitws-NN`: solo esa persona (Admin) | Workspace `gitws-team`: el grupo como Contributor, facilitadoras como Admin |
-| Repo GitHub **privado** `gitws-NN`: solo esa persona como collaborator | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
+| Usuario de Entra `userN-gitws@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-attendees` con todos |
+| Workspace Fabric `ws-gitws-userN`: solo esa persona (Admin) | Workspace `ws-gitws-team`: el grupo como Contributor, facilitadoras como Admin |
+| Repo GitHub **privado** `gitws-userN`: solo esa persona como collaborator | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
 | README con los ejercicios (`workshop/seed/`) | El mismo README |
 
 Aislamiento: nadie tiene rol en el workspace de otra persona ni acceso a su repo.
@@ -61,7 +61,7 @@ Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a 
 | 1:50-2:00 | Descanso | |
 | 2:00-2:40 | Ramas y pull requests | 4 y 5 |
 | 2:40-3:00 | Variables: variable libraries para cambiar de entorno | Demo |
-| 3:00-3:40 | Trabajo en equipo en `gitws-team`, conflicto incluido | 6 |
+| 3:00-3:40 | Trabajo en equipo en `ws-gitws-team`, conflicto incluido | 6 |
 | 3:40-4:00 | Deployment pipelines vs fabric-cicd, y cierre | Demo con FabricAsCode |
 
 ## Coste orientativo
