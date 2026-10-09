@@ -14,8 +14,6 @@ output "resource_group_name" {
 }
 
 output "workspace_ids" {
-  description = "Mapa '<layer>-<env>' -> Fabric workspace ID."
-  value       = one(module.medallion_cicd[*].workspace_ids)
   description = "Workspace IDs del template activo ('<layer>-<env>' en medallion-cicd, asistente en workshop)."
   value       = coalesce(one(module.medallion_cicd[*].workspace_ids), one(module.workshop[*].workspace_ids))
 }
