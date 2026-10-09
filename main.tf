@@ -9,6 +9,13 @@ data "azuread_user" "admin_members" {
 }
 
 locals {
+  # Lista de asistentes: la del tfvars o, si viene vacia, N asistentes genericos (demo).
+  workshop_attendees = length(var.workshop_attendees) > 0 ? var.workshop_attendees : [
+    for i in range(var.workshop_attendee_count) : { name = "User ${i + 1}", github_username = "" }
+  ]
+
+  capacity_id = var.existing_capacity_id != "" ? var.existing_capacity_id : one(module.capacity[*].capacity_id)
+
   admin_member_ids = [for u in data.azuread_user.admin_members : u.object_id]
 
   # La identidad que ejecuta Terraform siempre es admin de la capacity (la necesita
@@ -24,6 +31,9 @@ locals {
 }
 
 module "capacity" {
+  # Con existing_capacity_id se reutiliza una capacity de otro estado (p. ej. la demo 2
+  # de NetCoreConf usa la capacity de la demo 1) y aqui no se crea ninguna.
+  count  = var.existing_capacity_id == "" ? 1 : 0
   source = "./modules/capacity"
 
   name                    = var.capacity_name
@@ -32,6 +42,13 @@ module "capacity" {
   admin_members           = local.effective_capacity_admins
   randomize_capacity_name = var.randomize_capacity_name
   tags                    = var.tags
+}
+
+# El modulo capacity paso a tener count: sin esto, los estados existentes (demo de
+# Popkorn) planearian destruir y recrear la capacity.
+moved {
+  from = module.capacity
+  to   = module.capacity[0]
 }
 
 # Terraform no permite seleccionar el `source` de un modulo dinamicamente:
@@ -45,7 +62,7 @@ module "medallion_cicd" {
   project_name  = var.project_name
   layers        = var.layers
   environments  = var.environments
-  capacity_id   = module.capacity.capacity_id
+  capacity_id   = local.capacity_id
   group_owners  = local.effective_group_owners
   admin_members = local.admin_member_ids
 }
@@ -55,9 +72,10 @@ module "workshop" {
   source = "./modules/templates/workshop"
 
   prefix                 = var.project_name
-  attendees              = var.workshop_attendees
+  attendees              = local.workshop_attendees
+  create_repos           = var.workshop_create_repos
   tenant_domain          = var.workshop_tenant_domain
-  capacity_id            = module.capacity.capacity_id
+  capacity_id            = local.capacity_id
   group_owners           = local.effective_group_owners
   facilitator_object_ids = distinct(concat(var.workshop_facilitator_object_ids, local.admin_member_ids))
   seed_dir               = "${path.module}/workshop/seed"

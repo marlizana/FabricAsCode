@@ -54,6 +54,12 @@ variable "capacity_admin_members" {
   default     = []
 }
 
+variable "existing_capacity_id" {
+  description = "GUID de Fabric de una capacity ya existente. Si se informa, no se crea capacity en este estado."
+  type        = string
+  default     = ""
+}
+
 variable "admin_group_members" {
   description = "UPNs de personas que se anaden como miembros de TODOS los grupos Admin (sg-fbc-*-admin) que crea Terraform."
   type        = list(string)
@@ -165,6 +171,18 @@ variable "workshop_attendees" {
     github_username = optional(string, "")
   }))
   default = []
+}
+
+variable "workshop_attendee_count" {
+  description = "Si workshop_attendees esta vacio, crea N asistentes genericos user1..userN (demo)."
+  type        = number
+  default     = 0
+}
+
+variable "workshop_create_repos" {
+  description = "Crear un repo de GitHub por asistente y el repo team. En la demo de NetCoreConf va a false."
+  type        = bool
+  default     = true
 }
 
 variable "workshop_tenant_domain" {

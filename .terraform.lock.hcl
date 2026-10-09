@@ -86,7 +86,7 @@ provider "registry.terraform.io/integrations/github" {
 
 provider "registry.terraform.io/microsoft/fabric" {
   version     = "1.14.0"
-  constraints = "~> 1.12"
+  constraints = "~> 1.14"
   hashes = [
     "h1:p3mbO3ufH22DolpzRPjEXharn5/+ruyH3nmaOtPbw6U=",
     "zh:0ea15cd75fa54717463661a565b7bad0f63c0c1ecb0f08ced32c0da69058a76c",

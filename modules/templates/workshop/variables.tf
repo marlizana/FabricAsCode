@@ -1,5 +1,5 @@
 variable "prefix" {
-  description = "Prefijo de usuarios, workspaces y repos (ej. gitws -> gitws-01, gitws-team)."
+  description = "Prefijo: usuarios userN-<prefix>, workspaces ws-<prefix>-userN y ws-<prefix>-team, repos <prefix>-userN."
   type        = string
 }
 
@@ -46,6 +46,12 @@ variable "team_repo_visibility" {
 
 variable "protect_team_main" {
   description = "Exigir PR con 1 aprobacion para mergear a main en el repo compartido."
+  type        = bool
+  default     = true
+}
+
+variable "create_repos" {
+  description = "Crear repo privado por asistente y repo team en GitHub."
   type        = bool
   default     = true
 }

@@ -21,6 +21,12 @@
     reanuda      Reanuda la capacity
     pausa        Pausa la capacity ("y asi se deja de pagar")
 
+  Demo 2: el workshop (estado "netcoreconf-workshop", usa la capacity de la demo 1)
+    taller          plan con 20 alumnos (ws-workshopgit26-userN, userN-workshopgit26)
+    taller-apply    apply con 3 alumnos (el plan de 20 ya se ha visto)
+    taller-alumnos  Lista usuarios y workspaces; guarda las passwords en credenciales-netcoreconf.json
+    taller-limpia   destroy de la demo 2 (usuarios, workspaces y grupo)
+
   Preparar y limpiar
     prepara      Crea solo la capacity y el budget (antes de la charla; luego el plan da 81)
     limpia       Borra workspaces, grupos y roles; deja capacity y budget (entre ensayos)
@@ -35,6 +41,9 @@ $TfWs    = "netcoreconf"
 $ProjectFile = Join-Path $Root ".demo-project"
 $QaFlag      = Join-Path $Root ".demo-qa"
 $QaVarFile   = "environments/netcoreconf-qa.tfvars"
+$TallerWs    = "netcoreconf-workshop"
+$TallerVars  = "environments/netcoreconf-workshop.tfvars"
+$TallerCreds = Join-Path $Root "credenciales-netcoreconf.json"
 
 function VarArgs {
   $a = @("-var-file=$VarFile")
@@ -68,6 +77,27 @@ function Load-Project {
   }
   if (-not $env:TF_VAR_project_name) { Ask-Project }
   Say "Proyecto: $($env:TF_VAR_project_name)" "Yellow"
+}
+
+# Ejecuta terraform en el estado de la demo 2 con la capacity de la demo 1 y vuelve al estado
+# "netcoreconf" al acabar, pase lo que pase.
+function Taller {
+  param([string[]]$TfArgs)
+  Require-Env
+  Push-Location $Root
+  try {
+    & terraform workspace select $TfWs | Out-Null
+    $cap = (& terraform output -raw capacity_id)
+    if (-not $cap) { throw "No hay capacity en '$TfWs'. Antes: .\scripts\demo.ps1 prepara" }
+    $env:TF_VAR_existing_capacity_id = $cap
+    & terraform workspace select -or-create $TallerWs | Out-Null
+    & terraform @TfArgs
+    if ($LASTEXITCODE -ne 0) { throw "terraform $($TfArgs[0]) fallo" }
+  } finally {
+    Remove-Item Env:\TF_VAR_existing_capacity_id -ErrorAction SilentlyContinue
+    & terraform workspace select $TfWs | Out-Null
+    Pop-Location
+  }
 }
 
 function Ask-Project {
@@ -167,6 +197,15 @@ switch ($Accion) {
   "estado"   { Capacity-Call "get" }
   "reanuda"  { Capacity-Call "resume" }
   "pausa"    { Capacity-Call "suspend" }
+  "taller"        { Taller @("plan", "-var-file=$TallerVars") }
+  "taller-apply"  { Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=3", "-parallelism=8") }
+  "taller-limpia" { Taller @("destroy", "-var-file=$TallerVars", "-var=workshop_attendee_count=3") }
+  "taller-alumnos" {
+    Taller @("output", "-json", "workshop_credentials") | Set-Content -Path $TallerCreds -Encoding UTF8
+    $c = Get-Content $TallerCreds -Raw | ConvertFrom-Json
+    $c.PSObject.Properties | ForEach-Object { [pscustomobject]@{ alumno = $_.Name; usuario = $_.Value.upn; workspace = $_.Value.workspace } } | Format-Table -AutoSize
+    Say "Passwords en $TallerCreds (no se enseñan en pantalla, no se commitean)" "Yellow"
+  }
   "prepara"  { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
   "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
   "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs)); Remove-Item $QaFlag -ErrorAction SilentlyContinue }

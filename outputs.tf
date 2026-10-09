@@ -1,21 +1,19 @@
 output "capacity_id" {
   description = "GUID nativo de Fabric de la capacity creada (el que consumen las workspaces)."
-  value       = module.capacity.capacity_id
+  value       = local.capacity_id
 }
 
 output "capacity_arm_id" {
   description = "Resource ID de ARM de la capacity (util para tags/RBAC de Azure)."
-  value       = module.capacity.capacity_arm_id
+  value       = one(module.capacity[*].capacity_arm_id)
 }
 
 output "resource_group_name" {
   description = "Resource group creado para alojar la capacity."
-  value       = module.capacity.resource_group_name
+  value       = one(module.capacity[*].resource_group_name)
 }
 
 output "workspace_ids" {
-  description = "Mapa '<layer>-<env>' -> Fabric workspace ID."
-  value       = one(module.medallion_cicd[*].workspace_ids)
   description = "Workspace IDs del template activo ('<layer>-<env>' en medallion-cicd, asistente en workshop)."
   value       = coalesce(one(module.medallion_cicd[*].workspace_ids), one(module.workshop[*].workspace_ids))
 }
@@ -37,7 +35,7 @@ output "github_repository_clone_url" {
 
 output "capacity_name" {
   description = "Nombre final de la capacity (con sufijo si randomize_capacity_name = true). Lo usa fab-ops.sh para pausar/reanudar."
-  value       = module.capacity.capacity_name
+  value       = one(module.capacity[*].capacity_name)
 }
 
 output "workshop_credentials" {
