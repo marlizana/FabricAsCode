@@ -56,7 +56,7 @@ function VarArgs {
 # el repo publico. Copia scripts\demo.config.ps1.example a scripts\demo.config.ps1.
 $Config = Join-Path $PSScriptRoot "demo.config.ps1"
 if (Test-Path $Config) { . $Config }
-if (-not $TenantId -or -not $SubscriptionId -or -not $ClientId) {
+if ($Accion -ne "help" -and (-not $TenantId -or -not $SubscriptionId -or -not $ClientId)) {
   throw "Falta scripts\demo.config.ps1 con `$TenantId, `$SubscriptionId y `$ClientId (copia demo.config.ps1.example)"
 }
 
