@@ -212,7 +212,7 @@ switch ($Accion) {
   "reanuda"  { Capacity-Call "resume" }
   "pausa"    { Capacity-Call "suspend" }
   "taller"        { Taller @("plan", "-var-file=$TallerVars") }
-  "taller-apply"  { Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=3", "-parallelism=8") }
+  "taller-apply"  { Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=3", "-parallelism=$Par") }
   "taller-limpia" { Taller @("destroy", "-var-file=$TallerVars", "-var=workshop_attendee_count=3") }
   "taller-alumnos" {
     Taller @("output", "-json", "workshop_credentials") | Set-Content -Path $TallerCreds -Encoding UTF8
