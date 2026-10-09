@@ -2,7 +2,15 @@ data "azurerm_client_config" "current" {}
 
 data "azuread_client_config" "current" {}
 
+# Personas que entran en todos los grupos Admin (p. ej. las dos ponentes).
+data "azuread_user" "admin_members" {
+  for_each            = toset(var.admin_group_members)
+  user_principal_name = each.value
+}
+
 locals {
+  admin_member_ids = [for u in data.azuread_user.admin_members : u.object_id]
+
   # La identidad que ejecuta Terraform siempre es admin de la capacity (la necesita
   # para asignar workspaces); var.capacity_admin_members suma personas a esa lista.
   effective_capacity_admins = distinct(concat(
@@ -34,11 +42,12 @@ module "medallion_cicd" {
   count  = var.template == "medallion-cicd" ? 1 : 0
   source = "./modules/templates/medallion-cicd"
 
-  project_name = var.project_name
-  layers       = var.layers
-  environments = var.environments
-  capacity_id  = module.capacity.capacity_id
-  group_owners = local.effective_group_owners
+  project_name  = var.project_name
+  layers        = var.layers
+  environments  = var.environments
+  capacity_id   = module.capacity.capacity_id
+  group_owners  = local.effective_group_owners
+  admin_members = local.admin_member_ids
 }
 
 resource "github_repository" "fabric_content" {
@@ -57,11 +66,11 @@ resource "github_repository" "fabric_content" {
 
 locals {
   github_bootstrap_files = var.enable_github_cicd ? {
-    ".github/scripts/deploy.py"           = file("${path.module}/.github/scripts/deploy.py")
-    ".github/workflows/fabric-cicd.yml"   = file("${path.module}/.github/workflows/fabric-cicd.yml")
-    "requirements.txt"                    = file("${path.module}/requirements.txt")
-    ".github/workflows/fabric-ops.yml"    = file("${path.module}/.github/workflows/fabric-ops.yml")
-    "scripts/fab-ops.sh"                  = file("${path.module}/scripts/fab-ops.sh")
+    ".github/scripts/deploy.py"         = file("${path.module}/.github/scripts/deploy.py")
+    ".github/workflows/fabric-cicd.yml" = file("${path.module}/.github/workflows/fabric-cicd.yml")
+    "requirements.txt"                  = file("${path.module}/requirements.txt")
+    ".github/workflows/fabric-ops.yml"  = file("${path.module}/.github/workflows/fabric-ops.yml")
+    "scripts/fab-ops.sh"                = file("${path.module}/scripts/fab-ops.sh")
   } : {}
 
   # Todo lo que haya bajo fabric-content/ (parameter.yml e items de ejemplo) se
@@ -75,9 +84,9 @@ locals {
 resource "github_repository_file" "bootstrap" {
   for_each = merge(local.github_bootstrap_files, local.github_content_files)
 
-  repository          = github_repository.fabric_content[0].name
-  branch              = "main"
-  file                = each.key
+  repository = github_repository.fabric_content[0].name
+  branch     = "main"
+  file       = each.key
   # En Windows git puede convertir a CRLF al hacer checkout; bash en el runner no lo admite.
   content             = replace(each.value, "\r\n", "\n")
   commit_message      = "Bootstrap Fabric CI/CD"

@@ -14,6 +14,10 @@ randomize_capacity_name = true
 # Tu usuario como admin de la capacity, para verla y gestionarla desde Fabric.
 # El service principal que ejecuta Terraform se anade siempre.
 capacity_admin_members = ["mar.lizana@akanemar.onmicrosoft.com"]
+admin_group_members = [
+  "mar.lizana@akanemar.onmicrosoft.com",
+  "mingelmejor@akanemar.onmicrosoft.com",
+]
 
 enable_github_cicd           = true
 github_owner                 = "marlizana"

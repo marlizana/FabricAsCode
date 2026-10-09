@@ -20,4 +20,5 @@ module "workspace" {
   capacity_id     = var.capacity_id
   ad_group_prefix = "sg-fbc-${each.value.domain}-${each.value.env}" # "sg-fbc-ventas-bronze-dev"
   group_owners    = var.group_owners
+  admin_members   = var.admin_members
 }

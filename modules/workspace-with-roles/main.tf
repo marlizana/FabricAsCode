@@ -10,6 +10,8 @@ resource "azuread_group" "roles" {
   display_name     = "${var.ad_group_prefix}-${lower(each.value)}"
   security_enabled = true
   owners           = var.group_owners
+  # Solo el grupo Admin lleva miembros fijos; el resto se gestiona fuera de Terraform.
+  members = each.value == "Admin" ? var.admin_members : null
 }
 
 resource "fabric_workspace_role_assignment" "this" {

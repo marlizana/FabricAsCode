@@ -54,6 +54,12 @@ variable "capacity_admin_members" {
   default     = []
 }
 
+variable "admin_group_members" {
+  description = "UPNs de personas que se anaden como miembros de TODOS los grupos Admin (sg-fbc-*-admin) que crea Terraform."
+  type        = list(string)
+  default     = []
+}
+
 variable "ad_group_owners" {
   description = "Object IDs que seran owners de los grupos de seguridad AD creados. Si esta vacio, se usa la identidad que ejecuta Terraform."
   type        = list(string)

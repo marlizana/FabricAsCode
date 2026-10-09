@@ -13,6 +13,12 @@ variable "group_owners" {
   type        = list(string)
 }
 
+variable "admin_members" {
+  description = "Object IDs que se anaden como miembros del grupo Admin de cada workspace."
+  type        = list(string)
+  default     = []
+}
+
 variable "layers" {
   description = "Capas del medallion. Cada capa x entorno es una workspace."
   type        = list(string)

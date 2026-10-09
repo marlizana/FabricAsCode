@@ -25,6 +25,12 @@ variable "roles" {
   default     = ["Admin", "Contributor", "Member", "Viewer"]
 }
 
+variable "admin_members" {
+  description = "Object IDs que seran miembros del grupo del rol Admin."
+  type        = list(string)
+  default     = []
+}
+
 variable "group_owners" {
   description = "Object IDs que seran owners de los grupos AD creados."
   type        = list(string)

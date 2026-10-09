@@ -10,6 +10,10 @@ randomize_capacity_name = true
 capacity_sku            = "F2"
 region                  = "spaincentral"
 capacity_admin_members  = ["mar.lizana@akanemar.onmicrosoft.com"]
+admin_group_members = [
+  "mar.lizana@akanemar.onmicrosoft.com",
+  "mingelmejor@akanemar.onmicrosoft.com",
+]
 
 template     = "medallion-cicd"
 layers       = ["bronze", "silver", "gold"]
