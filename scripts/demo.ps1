@@ -7,7 +7,8 @@
   Antes de la charla
     env          Carga IDs y lee el secret del SP y el PAT desde el portapapeles.
                  IMPORTANTE, con punto delante:   . .\scripts\demo.ps1 env
-    init         terraform init + workspace de estado "netcoreconf"
+    init         terraform init (con backend.hcl si existe) + workspace de estado "netcoreconf"
+    migra-estado Una sola vez: copia el estado local al backend remoto (backend.hcl)
     estado       Estado de la capacity (Active / Paused)
 
   En directo
@@ -167,9 +168,15 @@ switch ($Accion) {
     Write-Host "Ojo: hay que ejecutarlo con punto delante para que las variables se queden en tu sesion:  . .\scripts\demo.ps1 env" -ForegroundColor Yellow
   }
   "init" {
-    Tf @("init")
+    if (Test-Path (Join-Path $Root "backend.hcl")) { Tf @("init", "-backend-config=backend.hcl") } else { Tf @("init") }
     Tf @("workspace", "select", "-or-create", $TfWs)
     Say "Estado de Terraform: workspace '$TfWs'" "Green"
+  }
+  "migra-estado" {
+    Require-Env
+    if (-not (Test-Path (Join-Path $Root "backend.hcl"))) { throw "Falta backend.hcl (copia backend.hcl.example)" }
+    Say "Copia TODOS los estados locales (default, netcoreconf...) al storage. Responde yes." "Yellow"
+    Tf @("init", "-backend-config=backend.hcl", "-migrate-state")
   }
   "hola" {
     Require-Env

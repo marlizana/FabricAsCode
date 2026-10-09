@@ -1,0 +1,8 @@
+# Copiar a backend.hcl (esta en .gitignore) y rellenar.
+# La identidad que ejecuta Terraform (el SP via ARM_CLIENT_ID/ARM_CLIENT_SECRET) necesita
+# "Storage Blob Data Contributor" sobre el storage account o el contenedor.
+resource_group_name  = "rg-fbc-tfstate"
+storage_account_name = "<nombre-del-storage>"
+container_name       = "tfstate"
+key                  = "fabricascode.tfstate"
+use_azuread_auth     = true

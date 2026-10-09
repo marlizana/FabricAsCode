@@ -1,0 +1,12 @@
+# Estado remoto en Azure Storage (ADLS Gen2 vale: el backend usa la API de blobs y
+# los leases para el bloqueo). La configuracion va aparte, en backend.hcl (no se
+# commitea): copia backend.hcl.example y rellenalo.
+#
+#   terraform init -backend-config=backend.hcl                  # normal
+#   terraform init -backend-config=backend.hcl -migrate-state   # una vez, desde el estado local
+#
+# Cada terraform workspace es un blob: <key> para "default" y <key>env:<nombre> para el resto.
+# Para probar el repo con estado local, borra este fichero.
+terraform {
+  backend "azurerm" {}
+}

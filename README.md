@@ -66,10 +66,24 @@ ajuste **Workspace settings > Create workspaces** debe incluir al grupo del Serv
 Principal; si no, `fabric_workspace` falla con `FeatureNotAvailable: Workspace creation
 is not enabled for the user`.
 
+## Estado remoto
+
+El estado vive en un storage account de Azure (vale ADLS Gen2): `backend.tf` declara el
+backend `azurerm` y los nombres van en `backend.hcl`, que no se commitea.
+
+```
+cp backend.hcl.example backend.hcl                       # rellenar
+terraform init -backend-config=backend.hcl
+terraform init -backend-config=backend.hcl -migrate-state   # solo si venias de estado local
+```
+
+La identidad que ejecuta Terraform necesita **Storage Blob Data Contributor** sobre el
+storage. Para probar el repo sin storage, borra `backend.tf` y usa estado local.
+
 ## Uso
 
 ```
-terraform init
+terraform init -backend-config=backend.hcl
 terraform validate
 cp terraform.tfvars.example terraform.tfvars   # editar valores, nunca commitear
 terraform plan
@@ -200,6 +214,17 @@ Todo desde `scripts/demo.ps1`, en Windows PowerShell 5.1 o 7, con estado propio
 .\scripts\demo.ps1 qa         # anade "qa" (una linea) y hace plan; luego apply
 .\scripts\demo.ps1 pausa      # y asi se deja de pagar
 .\scripts\demo.ps1 destroy
+```
+
+Demo 2, «monta un workshop para 20 alumnos»: estado propio (`netcoreconf-workshop`) sobre
+la capacity de la demo 1. Crea `userN-workshopgit26@<dominio>`, `ws-workshopgit26-userN`
+(con ese usuario como unico Admin) y `ws-workshopgit26-team`:
+
+```powershell
+.\scripts\demo.ps1 taller           # plan con 20 alumnos
+.\scripts\demo.ps1 taller-apply     # apply con 3
+.\scripts\demo.ps1 taller-alumnos   # usuarios y workspaces; passwords a credenciales-netcoreconf.json
+.\scripts\demo.ps1 taller-limpia
 ```
 
 Capas y entornos son variables (`layers`, `environments`); `project_name` no tiene
