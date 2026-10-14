@@ -3,11 +3,11 @@
 # Por asistente (N = 1, 2, 3...):
 #   - Usuario de Entra ID  userN-<prefix>@<dominio>  (password inicial aleatoria)
 #   - Workspace Fabric     ws-<prefix>-userN         (solo ese usuario, rol Admin)
-#   - Repo GitHub privado  <prefix>-userN            (opcional: create_repos)
+#   - Repo GitHub privado  <prefix>-userN            (opcional: create_repos; en el taller lo crea cada uno)
 # Compartido:
 #   - Grupo de Entra       sg-<prefix>-attendees
 #   - Workspace Fabric     ws-<prefix>-team          (grupo como Contributor, facilitadoras Admin)
-#   - Repo GitHub          <prefix>-team             (opcional; main protegida)
+#   - Repo GitHub          <prefix>-team             (opcional: create_team_repo; main protegida)
 #
 # Nadie ve el workspace ni el repo de otra persona: los workspaces no tienen mas
 # role assignments que su dueno (y la identidad que ejecuta Terraform, que queda
@@ -128,7 +128,7 @@ resource "github_repository_collaborator" "attendee" {
 }
 
 resource "github_repository" "team" {
-  count = var.create_repos ? 1 : 0
+  count = var.create_team_repo ? 1 : 0
 
   name        = "${var.prefix}-team"
   description = "Workshop Git para Power BI - repo colaborativo"
@@ -142,7 +142,7 @@ resource "github_repository" "team" {
 }
 
 resource "github_repository_collaborator" "team" {
-  for_each = { for k, a in local.repo_attendees : k => a if a.github_username != "" }
+  for_each = var.create_team_repo ? { for k, a in local.attendees : k => a if a.github_username != "" } : {}
 
   repository = github_repository.team[0].name
   username   = each.value.github_username
@@ -150,7 +150,7 @@ resource "github_repository_collaborator" "team" {
 }
 
 resource "github_branch_protection" "team_main" {
-  count = var.create_repos && var.protect_team_main ? 1 : 0
+  count = var.create_team_repo && var.protect_team_main ? 1 : 0
 
   repository_id  = github_repository.team[0].node_id
   pattern        = "main"
@@ -190,7 +190,7 @@ resource "github_repository_file" "attendee_seed" {
 }
 
 resource "github_repository_file" "team_seed" {
-  for_each = var.create_repos ? local.seed_files : {}
+  for_each = var.create_team_repo ? local.seed_files : {}
 
   repository          = github_repository.team[0].name
   branch              = "main"

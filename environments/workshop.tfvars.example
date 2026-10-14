@@ -19,6 +19,10 @@ project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-team
 workshop_tenant_domain          = "akanemar.onmicrosoft.com"
 workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
 
+# Cada alumno crea su propio repo privado en el ejercicio 1: aqui solo el repo team.
+workshop_create_repos     = false
+workshop_create_team_repo = true
+
 # Sin lista de asistentes: 20 alumnos genericos user1..user20.
 workshop_attendee_count = 20
 

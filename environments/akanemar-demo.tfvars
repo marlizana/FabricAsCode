@@ -25,7 +25,7 @@ github_repository_name       = "fabricascode-demo-content"
 github_repository_visibility = "private"
 
 # Red de seguridad para los creditos MVP.
-budget_amount         = 150
+budget_amount = 150
 # budget_contact_emails: en personal.auto.tfvars (no se commitea)
 
 tags = {

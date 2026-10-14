@@ -16,7 +16,8 @@ project_name = "workshopgit26"
 workshop_tenant_domain  = "akanemar.onmicrosoft.com"
 workshop_attendee_count = 20
 # Repos de GitHub por alumno: fuera en la charla (mas lento y no aporta a la historia).
-workshop_create_repos = false
+workshop_create_repos     = false
+workshop_create_team_repo = false
 
 admin_group_members = [
   "mar.lizana@akanemar.onmicrosoft.com",

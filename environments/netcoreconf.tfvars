@@ -23,7 +23,7 @@ environments = ["dev", "test", "prod"] # en directo: demo.ps1 qa anade "qa"
 enable_github_cicd = false
 github_owner       = "marlizana"
 
-budget_amount         = 50
+budget_amount = 50
 # budget_contact_emails: en personal.auto.tfvars (no se commitea)
 
 tags = {

@@ -56,6 +56,12 @@ variable "create_repos" {
   default     = true
 }
 
+variable "create_team_repo" {
+  description = "Crear el repo colaborativo <prefix>-team (con el README de ejercicios)."
+  type        = bool
+  default     = true
+}
+
 variable "seed_dir" {
   description = "Carpeta cuyo contenido se siembra en todos los repos (README, ejercicios, PBIP de partida)."
   type        = string

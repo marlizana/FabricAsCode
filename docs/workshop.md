@@ -12,7 +12,7 @@ Authenticator, trial de Power BI Pro y cuenta de GitHub, que les ayudamos a crea
 |---|---|
 | Usuario de Entra `userN-gitws@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-attendees` con todos |
 | Workspace Fabric `ws-gitws-userN`: solo esa persona (Admin) | Workspace `ws-gitws-team`: el grupo como Contributor, facilitadoras como Admin |
-| Repo GitHub **privado** `gitws-userN`: solo esa persona como collaborator | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
+| Repo GitHub **privado** que crea cada persona en su cuenta (ejercicio 1) | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
 | README con los ejercicios (`workshop/seed/`) | El mismo README |
 
 Aislamiento: nadie tiene rol en el workspace de otra persona ni acceso a su repo.
@@ -47,7 +47,7 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 |---|---|
 | 1 semana antes | Mail a asistentes (si la organizacion nos da la lista): traer movil para MFA y, si pueden, cuenta de GitHub |
 | 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
-| Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona, rellenar `github_username` y re-aplicar para invitarles a su repo y al team |
+| Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles a `gitws-team` (re-apply con `github_username` o desde GitHub) |
 | Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit y PR |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |

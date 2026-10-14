@@ -22,5 +22,5 @@ output "credentials" {
 
 output "team_repo_url" {
   description = "Repo colaborativo."
-  value       = var.create_repos ? github_repository.team[0].html_url : null
+  value       = var.create_team_repo ? github_repository.team[0].html_url : null
 }

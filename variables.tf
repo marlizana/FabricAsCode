@@ -185,6 +185,12 @@ variable "workshop_create_repos" {
   default     = true
 }
 
+variable "workshop_create_team_repo" {
+  description = "Crear el repo colaborativo del workshop."
+  type        = bool
+  default     = true
+}
+
 variable "workshop_tenant_domain" {
   description = "Dominio de Entra ID donde se crean los usuarios del workshop."
   type        = string

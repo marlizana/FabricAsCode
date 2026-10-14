@@ -1,20 +1,23 @@
 # Workshop: Git para gente de Power BI
 
-Este es **tu** repositorio. Solo lo ves tú (y las facilitadoras). Rompe lo que quieras:
-para eso está Git.
+Este es el repo **común** del taller: aquí están los ejercicios y aquí trabajaremos todas
+juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta de GitHub.
 
 ## Tus credenciales
 
 - Usuario de Fabric: el que te hemos dado en papel (`userN-gitws@akanemar.onmicrosoft.com`)
-- Workspace de Fabric: se llama igual que este repo
-- Repo colaborativo: `gitws-team` (ahí trabajamos todas juntas al final)
+- Workspace de Fabric: `ws-gitws-userN` (solo lo ves tú)
+- Repo personal: el que creas en el ejercicio 1
+- Repo colaborativo: `gitws-team`, este. Te invitamos en el descanso: acepta la invitación que llega por correo
 
 ## Ejercicios
 
-### 1 · Conecta tu workspace a este repo
-1. En Fabric abre tu workspace → **Workspace settings → Git integration**.
-2. Elige **GitHub**, conecta tu cuenta y selecciona este repo, rama `main`, carpeta `/`.
-3. Fíjate en lo que aparece en GitHub después del primer commit.
+### 1 · Tu repo y tu workspace, conectados
+1. En GitHub: **New repository** → nombre `workshop-git` → **Private** → marca *Add a README* → **Create**.
+2. En GitHub: **Settings → Developer settings → Fine-grained tokens → Generate new token**.
+   Solo ese repo, permiso **Contents: Read and write**, caducidad 7 días. Copia el token.
+3. En Fabric abre `ws-gitws-userN` → **Workspace settings → Git integration → GitHub**.
+   **Add account** con el token y la URL de tu repo; rama `main`, carpeta `/`.
 
 ### 2 · Tu primer commit desde Fabric
 1. Crea un lakehouse y un informe (vale el de ejemplo).
@@ -32,8 +35,9 @@ para eso está Git.
 3. En GitHub abre una **pull request** hacia `main` y mírala antes de mergear.
 
 ### 5 · Deshacer sin rezar
-1. En GitHub, revierte el último commit (**Revert**).
-2. En Fabric, **Update all** y comprueba que el informe vuelve a como estaba.
+1. En GitHub abre la pull request que mergeaste en el ejercicio 4 y pulsa **Revert**.
+2. Se crea una PR nueva que deshace la anterior: mergéala.
+3. En Fabric, **Source control → Updates → Update all** y comprueba que el informe vuelve a como estaba.
 
 ### 6 · Trabajo en equipo (repo `gitws-team`)
 1. Conecta el workspace `ws-gitws-team` al repo `gitws-team`. Una sola persona lo hace.
