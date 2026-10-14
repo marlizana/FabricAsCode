@@ -1,4 +1,4 @@
-# Workshop de Git (4 h, 20-25 asistentes).
+# Workshop de Git (viernes 6/11, 10:00-14:00, unas 20 personas).
 # Copiar a environments/workshop.tfvars (NO commitear: lleva nombres y usuarios de GitHub).
 # Uso:
 #   terraform workspace new workshop   # estado separado de la demo
@@ -19,10 +19,15 @@ project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-team
 workshop_tenant_domain          = "akanemar.onmicrosoft.com"
 workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
 
-workshop_attendees = [
-  { name = "Asistente Uno", github_username = "github-user-1" },
-  { name = "Asistente Dos" }, # sin usuario de GitHub todavia: se anade luego y se re-aplica
-]
+# Sin lista de asistentes: 20 alumnos genericos user1..user20.
+workshop_attendee_count = 20
+
+# Con lista (sustituye a workshop_attendee_count). github_username se rellena el dia del taller
+# y se re-aplica para invitarles a su repo y al repo team.
+# workshop_attendees = [
+#   { name = "Asistente Uno", github_username = "github-user-1" },
+#   { name = "Asistente Dos" },
+# ]
 
 # El repo de contenido de la demo no aplica al workshop.
 enable_github_cicd = false

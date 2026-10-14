@@ -1,6 +1,10 @@
 # Workshop de Git para Power BI: cómo se monta
 
-4 horas, 20-25 asistentes, todo en Fabric y GitHub. Template de Terraform: `workshop`.
+Viernes 6/11, 10:00-14:00 (DataSaturday Madrid). Unas 20 personas: aun no hay lista, asi que se crean
+20 alumnos genericos (`workshop_attendee_count = 20`) y se reparten en tarjetas. Template de Terraform: `workshop`.
+
+Los primeros 30 minutos son de puesta a punto (slide 3 del deck): usuario y contrasena nueva, MFA con
+Authenticator, trial de Power BI Pro y cuenta de GitHub, que les ayudamos a crear si no la tienen.
 
 ## Qué se crea
 
@@ -41,9 +45,9 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 
 | Cuándo | Qué |
 |---|---|
-| 1 semana antes | Mail a asistentes: crear cuenta de GitHub y enviarnos el usuario |
-| 3 días antes | Rellenar `environments/workshop.tfvars` y `terraform apply`. Las invitaciones de GitHub caducan a los 7 días |
-| 3 días antes | Recordatorio: aceptar la invitación de GitHub (llega por mail) |
+| 1 semana antes | Mail a asistentes (si la organizacion nos da la lista): traer movil para MFA y, si pueden, cuenta de GitHub |
+| 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
+| Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona, rellenar `github_username` y re-aplicar para invitarles a su repo y al team |
 | Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit y PR |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |
@@ -54,15 +58,15 @@ Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a 
 
 | Tiempo | Bloque | Ejercicio |
 |---|---|---|
-| 0:00-0:20 | "¿Ha oído usted hablar de Git?" Qué problema resuelve | Login, MFA, trial |
-| 0:20-0:50 | Fundamentos: repo, commit, rama, merge, PR | — |
-| 0:50-1:20 | Configuración: conectar el workspace a GitHub | 1 y 2 |
-| 1:20-1:50 | Las tripas: PBIP, TMDL, report.json | 3 |
-| 1:50-2:00 | Descanso | |
-| 2:00-2:40 | Ramas y pull requests | 4 y 5 |
-| 2:40-3:00 | Variables: variable libraries para cambiar de entorno | Demo |
-| 3:00-3:40 | Trabajo en equipo en `ws-gitws-team`, conflicto incluido | 6 |
-| 3:40-4:00 | Deployment pipelines vs fabric-cicd, y cierre | Demo con FabricAsCode |
+| 0:00-0:30 | Puesta a punto: usuario, MFA, trial de Pro y cuenta de GitHub | — |
+| 0:30-1:00 | Fundamentos: repo, commit, rama, merge, PR | — |
+| 1:00-1:30 | Configuración: conectar el workspace a GitHub | 1 y 2 |
+| 1:30-2:00 | Las tripas: PBIP, TMDL, report.json | 3 |
+| 2:00-2:10 | Descanso | |
+| 2:10-2:50 | Ramas y pull requests | 4 y 5 |
+| 2:50-3:10 | Variables: variable libraries para cambiar de entorno | Demo |
+| 3:10-3:45 | Trabajo en equipo en `ws-gitws-team`, conflicto incluido | 6 |
+| 3:45-4:00 | Deployment pipelines vs fabric-cicd, y cierre | Demo con FabricAsCode |
 
 ## Coste orientativo
 
