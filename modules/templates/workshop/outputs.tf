@@ -24,3 +24,8 @@ output "team_repo_url" {
   description = "Repo colaborativo."
   value       = var.create_team_repo ? github_repository.team[0].html_url : null
 }
+
+output "attendee_upns" {
+  description = "UPNs de los asistentes (para darles permisos fuera del modulo, p. ej. en la capacity)."
+  value       = [for k in keys(local.attendees) : azuread_user.attendee[k].user_principal_name]
+}

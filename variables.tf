@@ -202,6 +202,18 @@ variable "workshop_tenant_domain" {
   }
 }
 
+variable "workshop_workspace_creators_group" {
+  description = "Nombre de un grupo de seguridad YA EXISTENTE que esta en el tenant setting \"Users can create Fabric workspaces\". Los asistentes entran en el y pueden hacer Branch out a un workspace nuevo. Vacio: no se usa."
+  type        = string
+  default     = ""
+}
+
+variable "workshop_attendees_capacity_admins" {
+  description = "Hace a los asistentes admins de la capacity que crea este estado, para que puedan asignarle los workspaces que crean con Branch out. Solo si la capacity se crea aqui (sin existing_capacity_id)."
+  type        = bool
+  default     = false
+}
+
 variable "workshop_facilitator_object_ids" {
   description = "Object IDs de facilitadores con Admin en el workspace compartido."
   type        = list(string)

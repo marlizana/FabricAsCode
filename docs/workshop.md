@@ -45,12 +45,39 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 
 | Cuándo | Qué |
 |---|---|
+| 1 semana antes | Una sola vez, para Branch out (ver abajo): crear el grupo `sg-fabric-workspace-creators` y añadirlo al tenant setting de crear workspaces |
 | 1 semana antes | Mail a asistentes (si la organizacion nos da la lista): traer movil para MFA y, si pueden, cuenta de GitHub |
 | 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
 | Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles a `gitws-team` (re-apply con `github_username` o desde GitHub) |
-| Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit y PR |
+| Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit, PR y **Branch out a un workspace nuevo** |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |
+
+### Branch out: crear workspaces y asignarlos a la capacity
+
+Branch out a un workspace nuevo (ejercicios 4 y 6) crea un workspace con la identidad del
+alumno. Necesita dos permisos que un usuario recién creado no tiene:
+
+1. **Crear workspaces.** En el tenant, el setting está limitado a grupos. Una sola vez:
+   ```powershell
+   az ad group create --display-name sg-fabric-workspace-creators --mail-nickname sg-fabric-workspace-creators
+   ```
+   y en el portal de admin de Fabric: *Tenant settings → Workspace settings → Create workspaces*,
+   añadir `sg-fabric-workspace-creators` junto a `sg-fabric-automation`. Terraform mete a los
+   alumnos en ese grupo (`workshop_workspace_creators_group`) y los saca en el `destroy`.
+   El grupo no lo crea Terraform a propósito: si se borrara en cada `destroy`, habría que
+   volver a añadirlo al tenant setting cada vez.
+   Atajo: `workshop_workspace_creators_group = "sg-fabric-automation"` funciona sin tocar nada,
+   a cambio de mezclar alumnos con el grupo de automatización.
+2. **Asignar el workspace a la capacity.** El rol Contributor de la capacity no se puede dar
+   por API, así que con `workshop_attendees_capacity_admins = true` los alumnos son admins de la
+   capacity del taller (solo existe ese día). Si se usa una capacity existente
+   (`existing_capacity_id`), poner a mano en el portal de admin *Capacity settings →
+   Contributor permissions* el grupo `sg-fabric-workspace-creators`.
+
+Los cambios de pertenencia a grupos tardan un rato en llegar a Fabric: hacer el `apply` el día
+anterior, no esa misma mañana. Plan B si Branch out falla: **Checkout new branch** en su propio
+workspace (no crea workspace nuevo).
 
 Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a nadie) y volver a hacer `apply`.
 

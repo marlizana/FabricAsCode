@@ -23,6 +23,14 @@ workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
 workshop_create_repos     = false
 workshop_create_team_repo = true
 
+# Branch out a un workspace nuevo (ejercicios 4 y 6): cada alumno tiene que poder crear un
+# workspace y asignarlo a la capacity.
+# - El grupo tiene que existir ANTES y estar en el tenant setting "Users can create Fabric
+#   workspaces" (docs/workshop.md, "Antes del taller"). Con "sg-fabric-automation" vale tal cual.
+# - Los alumnos pasan a ser admins de ESTA capacity (solo vive el dia del taller).
+workshop_workspace_creators_group  = "sg-fabric-workspace-creators"
+workshop_attendees_capacity_admins = true
+
 # Sin lista de asistentes: 20 alumnos genericos user1..user20.
 workshop_attendee_count = 20
 
