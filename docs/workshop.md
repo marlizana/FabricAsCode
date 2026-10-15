@@ -50,6 +50,7 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 | 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
 | Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles a `gitws-team` (re-apply con `github_username` o desde GitHub) |
 | Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit, PR y **Branch out a un workspace nuevo** |
+| Día anterior | Mar conecta `ws-gitws-team` al repo `gitws-team`, rama `main`, carpeta `/` (los alumnos son Contributor y no pueden conectarlo) |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |
 
@@ -83,17 +84,18 @@ Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a 
 
 ## Agenda (4 h)
 
-| Tiempo | Bloque | Ejercicio |
+| Hora | Bloque | Ejercicio |
 |---|---|---|
-| 0:00-0:30 | Puesta a punto: usuario, MFA, trial de Pro y cuenta de GitHub | — |
-| 0:30-1:00 | Fundamentos: repo, commit, rama, merge, PR | — |
-| 1:00-1:30 | Configuración: conectar el workspace a GitHub | 1 y 2 |
-| 1:30-2:00 | Las tripas: PBIP, TMDL, report.json | 3 |
-| 2:00-2:10 | Descanso | |
-| 2:10-2:50 | Ramas y pull requests | 4 y 5 |
-| 2:50-3:10 | Variables: variable libraries para cambiar de entorno | Demo |
-| 3:10-3:45 | Trabajo en equipo en `ws-gitws-team`, conflicto incluido | 6 |
-| 3:45-4:00 | Deployment pipelines vs fabric-cicd, y cierre | Demo con FabricAsCode |
+| 10:00-10:30 | Puesta a punto: usuario, MFA, trial de Pro y cuenta de GitHub | — |
+| 10:30-10:50 | Fundamentos: repo, commit, rama, merge, PR (con el dibujo de la rama) | — |
+| 10:50-11:20 | Conectar el workspace a GitHub | 1 y 2 |
+| 11:20-11:45 | Las tripas: PBIP y TMDL | 3 (o demo si vamos tarde) |
+| 11:45-12:15 | Ramas y pull requests | 4 |
+| 12:15-12:30 | Descanso: invitar a todas a `gitws-team` | |
+| 12:30-13:15 | Repo común `gitws-team`, conflicto incluido | 5 |
+| 13:15-13:30 | Deshacer con Revert en el repo común | 6 |
+| 13:30-13:50 | Pasar entre entornos: variable libraries, deployment pipelines y fabric-cicd | Demo |
+| 13:50-14:00 | Novedades (deployment plans), si llegamos, y cierre | Demo |
 
 ## Coste orientativo
 

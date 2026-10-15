@@ -29,21 +29,30 @@ juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta d
 2. Cambia en Fabric el formato de una medida y haz commit.
 3. Mira el diff en GitHub: ese es el cambio, y nada más.
 
-### 4 · Ramas
+### 4 · Tu primera pull request (antes del descanso)
 1. En Fabric, **Source control → Branch out** a una rama `feature/<tu-nombre>`.
+   Si Branch out a un workspace nuevo da error de permisos: **Checkout new branch** en tu propio workspace.
 2. Cambia algo en el informe y haz commit en la rama.
-3. En GitHub abre una **pull request** hacia `main` y mírala antes de mergear.
+3. En GitHub abre una **pull request** hacia `main`, lee el diff, apruébala y haz merge (es tu repo).
+4. Vuelve al workspace de `main` y pulsa **Update all**: ahí está tu cambio.
 
-### 5 · Deshacer sin rezar
-1. En GitHub abre la pull request que mergeaste en el ejercicio 4 y pulsa **Revert**.
-2. Se crea una PR nueva que deshace la anterior: mergéala.
-3. En Fabric, **Source control → Updates → Update all** y comprueba que el informe vuelve a como estaba.
+### 5 · Trabajo en equipo (repo `gitws-team`)
+`ws-gitws-team` ya está conectado a la rama `main` de este repo. `main` está protegida: sin PR aprobada no entra nada.
+1. Crea un segundo token, esta vez **classic**: **Settings → Developer settings → Tokens (classic)**,
+   scope **public_repo**, caducidad 7 días. El fine-grained del ejercicio 1 no sirve: GitHub no deja
+   usarlos en repos de otra persona en los que eres colaboradora.
+2. En `ws-gitws-team`, **Branch out** a tu rama (`team/<tu-nombre>`) con ese token y cambia **tu** página del informe.
+3. Commit y pull request hacia `main`.
+4. Revisa la PR de quien tengas al lado: lee el diff y apruébala. Con la aprobación, mergea la tuya.
+5. Provocamos un conflicto a propósito y lo resolvemos juntas.
 
-### 6 · Trabajo en equipo (repo `gitws-team`)
-1. Conecta el workspace `ws-gitws-team` al repo `gitws-team`. Una sola persona lo hace.
-2. Cada una crea su rama, cambia **su** página del informe y abre una PR.
-3. Revisamos y mergeamos juntas. `main` está protegida: sin PR aprobada no entra nada.
-4. Provocamos un conflicto a propósito y lo resolvemos.
+### 6 · Deshacer sin romper nada (repo `gitws-team`)
+1. En GitHub abre **tu** pull request del ejercicio 5, ya mergeada, y pulsa **Revert**.
+2. Se crea una PR nueva que deshace la anterior: pide que te la aprueben y mergéala.
+3. En `ws-gitws-team`, **Source control → Updates → Update all**: tu página vuelve a como estaba.
+4. Mira el historial de `main`: el cambio y su revert siguen ahí. No se ha borrado nada.
+
+Plan B si no llegaste a mergear en el ejercicio 5: haz el Revert de tu PR del ejercicio 4 en tu repo `workshop-git`.
 
 ## Glosario de supervivencia
 
