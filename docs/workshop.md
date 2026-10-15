@@ -50,6 +50,7 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 | 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
 | Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles a `gitws-team` (re-apply con `github_username` o desde GitHub) |
 | Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit, PR y **Branch out a un workspace nuevo** |
+| Día anterior | Preparar en `ws-gitws-team` un informe con una página por alumno (`user1`…`user20`) y hacer commit |
 | Día anterior | Mar conecta `ws-gitws-team` al repo `gitws-team`, rama `main`, carpeta `/` (los alumnos son Contributor y no pueden conectarlo) |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |

@@ -33,15 +33,16 @@ juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta d
 1. En Fabric, **Source control → Branch out** a una rama `feature/<tu-nombre>`.
    Si Branch out a un workspace nuevo da error de permisos: **Checkout new branch** en tu propio workspace.
 2. Cambia algo en el informe y haz commit en la rama.
-3. En GitHub abre una **pull request** hacia `main`, lee el diff, apruébala y haz merge (es tu repo).
+3. En GitHub abre una **pull request** hacia `main`, lee el diff y haz merge (en tu propio repo no hay aprobación: GitHub no deja aprobar tu PR).
 4. Vuelve al workspace de `main` y pulsa **Update all**: ahí está tu cambio.
 
 ### 5 · Trabajo en equipo (repo `gitws-team`)
 `ws-gitws-team` ya está conectado a la rama `main` de este repo. `main` está protegida: sin PR aprobada no entra nada.
 1. Crea un segundo token, esta vez **classic**: **Settings → Developer settings → Tokens (classic)**,
-   scope **public_repo**, caducidad 7 días. El fine-grained del ejercicio 1 no sirve: GitHub no deja
+   scope **repo**, caducidad 7 días. El fine-grained del ejercicio 1 no sirve: GitHub no deja
    usarlos en repos de otra persona en los que eres colaboradora.
-2. En `ws-gitws-team`, **Branch out** a tu rama (`team/<tu-nombre>`) con ese token y cambia **tu** página del informe.
+2. En `ws-gitws-team`: **Source control → Accounts → Add account** con ese token y la URL de este repo.
+   Después **Source control → Branches → Branch out to another workspace** a tu rama (`team/<tu-nombre>`) y cambia **tu** página del informe.
 3. Commit y pull request hacia `main`.
 4. Revisa la PR de quien tengas al lado: lee el diff y apruébala. Con la aprobación, mergea la tuya.
 5. Provocamos un conflicto a propósito y lo resolvemos juntas.
