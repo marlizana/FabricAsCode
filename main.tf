@@ -2,6 +2,13 @@ data "azurerm_client_config" "current" {}
 
 data "azuread_client_config" "current" {}
 
+# Grupo persistente del tenant setting "crear workspaces" (taller: Branch out).
+data "azuread_group" "workshop_workspace_creators" {
+  count            = var.workshop_workspace_creators_group != "" ? 1 : 0
+  display_name     = var.workshop_workspace_creators_group
+  security_enabled = true
+}
+
 # Personas que entran en todos los grupos Admin (p. ej. las dos ponentes).
 data "azuread_user" "admin_members" {
   for_each            = toset(var.admin_group_members)
@@ -20,9 +27,14 @@ locals {
 
   # La identidad que ejecuta Terraform siempre es admin de la capacity (la necesita
   # para asignar workspaces); var.capacity_admin_members suma personas a esa lista.
+  # En el taller, los asistentes tambien: Branch out crea workspaces y hay que poder
+  # asignarlos a la capacity. Fabric no deja dar el rol Contributor de la capacity por API.
+  workshop_capacity_admins = var.workshop_attendees_capacity_admins ? flatten(module.workshop[*].attendee_upns) : []
+
   effective_capacity_admins = distinct(concat(
     var.capacity_admin_members,
-    [data.azurerm_client_config.current.object_id]
+    [data.azurerm_client_config.current.object_id],
+    local.workshop_capacity_admins
   ))
 
   effective_group_owners = length(var.ad_group_owners) > 0 ? (
@@ -80,6 +92,8 @@ module "workshop" {
   group_owners           = local.effective_group_owners
   facilitator_object_ids = distinct(concat(var.workshop_facilitator_object_ids, local.admin_member_ids))
   seed_dir               = "${path.module}/workshop/seed"
+
+  workspace_creators_group_id = try(data.azuread_group.workshop_workspace_creators[0].object_id, "")
 }
 
 resource "github_repository" "fabric_content" {

@@ -66,3 +66,9 @@ variable "seed_dir" {
   description = "Carpeta cuyo contenido se siembra en todos los repos (README, ejercicios, PBIP de partida)."
   type        = string
 }
+
+variable "workspace_creators_group_id" {
+  description = "Object ID de un grupo ya existente con permiso para crear workspaces (tenant setting). Vacio: no se usa."
+  type        = string
+  default     = ""
+}

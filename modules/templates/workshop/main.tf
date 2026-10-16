@@ -6,6 +6,8 @@
 #   - Repo GitHub privado  <prefix>-userN            (opcional: create_repos; en el taller lo crea cada uno)
 # Compartido:
 #   - Grupo de Entra       sg-<prefix>-attendees
+#   - (opcional) los asistentes entran tambien en un grupo persistente con permiso para
+#     crear workspaces (tenant setting). Hace falta para "Branch out" a un workspace nuevo.
 #   - Workspace Fabric     ws-<prefix>-team          (grupo como Contributor, facilitadoras Admin)
 #   - Repo GitHub          <prefix>-team             (opcional: create_team_repo; main protegida)
 #
@@ -52,6 +54,16 @@ resource "azuread_group" "attendees" {
   security_enabled = true
   owners           = var.group_owners
   members          = [for u in azuread_user.attendee : u.object_id]
+}
+
+# Grupo que NO gestiona este modulo: existe antes del taller y esta en el tenant setting
+# "Users can create Fabric workspaces". El grupo sg-<prefix>-attendees no sirve para eso:
+# se crea y se borra con cada apply/destroy y su object ID cambia.
+resource "azuread_group_member" "workspace_creator" {
+  for_each = var.workspace_creators_group_id != "" ? local.attendees : {}
+
+  group_object_id  = var.workspace_creators_group_id
+  member_object_id = azuread_user.attendee[each.key].object_id
 }
 
 # ---------- Fabric ----------
