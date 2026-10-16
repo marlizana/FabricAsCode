@@ -1,0 +1,102 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-16T05:40:00Z"
+ },
+ "lists": "css",
+ "title": "Y yo aquí creando workspaces a mano · Terraform al rescate (NetCoreConf)",
+ "order": [
+  "cover",
+  "sponsors",
+  "problema-word",
+  "problema-cuenta",
+  "espera",
+  "hola",
+  "ruta",
+  "requisitos",
+  "d1",
+  "clickops",
+  "pecados",
+  "create-table",
+  "iac-def",
+  "imp-decl",
+  "ganas",
+  "cambio-mental",
+  "d2",
+  "tres-cosas",
+  "provider",
+  "providers",
+  "anatomia",
+  "seis-palabras",
+  "primer-tf",
+  "d3",
+  "compara",
+  "estado-delta",
+  "plan-ejecucion",
+  "leer-plan",
+  "merge",
+  "ciclo",
+  "drift",
+  "reglas-estado",
+  "d4",
+  "provider-oficial",
+  "que-crear",
+  "auth",
+  "demo1",
+  "demo2",
+  "template",
+  "antes-despues",
+  "trampas",
+  "continente",
+  "lunes",
+  "recursos",
+  "cierre"
+ ],
+ "sections": {
+  "s1": {
+   "description": "Arranque: el problema contado como teletienda",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Quiénes somos y qué vamos a ver",
+   "start": "hola"
+  },
+  "s3": {
+   "description": "Bloque 1: qué es Infrastructure as Code",
+   "start": "d1"
+  },
+  "s4": {
+   "description": "Bloque 2: qué es Terraform",
+   "start": "d2"
+  },
+  "s5": {
+   "description": "Bloque 3: cómo funciona por dentro",
+   "start": "d3"
+  },
+  "s6": {
+   "description": "Bloque 4: Terraform y Fabric en la práctica, con demos",
+   "start": "d4"
+  },
+  "s7": {
+   "description": "Cierre",
+   "start": "antes-despues"
+  }
+ },
+ "cover": "cover",
+ "faces": {
+  "poppins": {
+   "family": "Poppins",
+   "href": "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap"
+  },
+  "inter": {
+   "family": "Inter",
+   "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+  },
+  "jetbrains-mono": {
+   "family": "JetBrains Mono",
+   "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+  }
+ },
+ "designSystems": []
+}
