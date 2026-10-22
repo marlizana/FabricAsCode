@@ -2,7 +2,7 @@
 #
 # Por asistente (N = 1, 2, 3...):
 #   - Usuario de Entra ID  userN-<prefix>@<dominio>  (password inicial aleatoria)
-#   - Workspace Fabric     ws-<prefix>-userN         (solo ese usuario, rol Admin)
+#   - Workspace Fabric     ws-<prefix>-userN         (Admin: ese usuario y las ponentes)
 #   - Repo GitHub privado  <prefix>-userN            (opcional: create_repos; en el taller lo crea cada uno)
 # Compartido:
 #   - Grupo de Entra       sg-<prefix>-attendees
@@ -11,9 +11,9 @@
 #   - Workspace Fabric     ws-<prefix>-team          (grupo como Contributor, facilitadoras Admin)
 #   - Repo GitHub          <prefix>-team             (opcional: create_team_repo; main protegida)
 #
-# Nadie ve el workspace ni el repo de otra persona: los workspaces no tienen mas
-# role assignments que su dueno (y la identidad que ejecuta Terraform, que queda
-# como Admin por crearlos) y los repos privados solo tienen a su asistente.
+# Ningun alumno ve el workspace ni el repo de otro: cada workspace tiene como Admin a su
+# dueno, a las ponentes (facilitator_object_ids) y a la identidad que ejecuta Terraform
+# (por crearlo); los repos privados solo tienen a su asistente.
 
 locals {
   # Clave = "userN"; de ella salen el usuario, el workspace y el repo.
@@ -84,6 +84,23 @@ resource "fabric_workspace_role_assignment" "attendee" {
 
   principal = {
     id   = azuread_user.attendee[each.key].object_id
+    type = "User"
+  }
+}
+
+# Las ponentes (facilitator_object_ids) tambien son Admin de cada workspace de alumno,
+# para poder entrar a ayudar. Los alumnos siguen sin ver el de los demas.
+resource "fabric_workspace_role_assignment" "attendee_facilitators" {
+  for_each = {
+    for pair in setproduct(keys(local.attendees), var.facilitator_object_ids) :
+    "${pair[0]}-${pair[1]}" => { attendee = pair[0], object_id = pair[1] }
+  }
+
+  workspace_id = fabric_workspace.attendee[each.value.attendee].id
+  role         = "Admin"
+
+  principal = {
+    id   = each.value.object_id
     type = "User"
   }
 }

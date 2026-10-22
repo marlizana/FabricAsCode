@@ -219,7 +219,7 @@ Todo desde `scripts/demo.ps1`, en Windows PowerShell 5.1 o 7, con estado propio
 
 Demo 2, «monta un workshop para 20 alumnos»: estado propio (`netcoreconf-workshop`) sobre
 la capacity de la demo 1. Crea `userN-workshopgit26@<dominio>`, `ws-workshopgit26-userN`
-(con ese usuario como unico Admin) y `ws-workshopgit26-team`:
+(Admin: ese usuario y las ponentes; ningun otro alumno) y `ws-workshopgit26-team`:
 
 ```powershell
 .\scripts\demo.ps1 taller           # plan con 20 alumnos
