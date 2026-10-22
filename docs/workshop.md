@@ -73,7 +73,10 @@ alumno. Necesita dos permisos que un usuario recién creado no tiene:
    a cambio de mezclar alumnos con el grupo de automatización.
 2. **Asignar el workspace a la capacity.** El rol Contributor de la capacity no se puede dar
    por API, así que con `workshop_attendees_capacity_admins = true` los alumnos son admins de la
-   capacity del taller (solo existe ese día). Si se usa una capacity existente
+   capacity del taller (solo existe ese día). Los usuarios tienen que existir antes que la
+   capacity, así que el primer despliegue va en dos pasos:
+   `terraform apply -var-file=environments/workshop.tfvars "-target=module.workshop[0].azuread_user.attendee"`
+   y después el `apply` completo. Si se usa una capacity existente
    (`existing_capacity_id`), poner a mano en el portal de admin *Capacity settings →
    Contributor permissions* el grupo `sg-fabric-workspace-creators`.
 

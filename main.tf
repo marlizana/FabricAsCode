@@ -29,7 +29,12 @@ locals {
   # para asignar workspaces); var.capacity_admin_members suma personas a esa lista.
   # En el taller, los asistentes tambien: Branch out crea workspaces y hay que poder
   # asignarlos a la capacity. Fabric no deja dar el rol Contributor de la capacity por API.
-  workshop_capacity_admins = var.workshop_attendees_capacity_admins ? flatten(module.workshop[*].attendee_upns) : []
+  # Los UPN se calculan aqui con la misma regla que el modulo workshop, sin leer sus outputs:
+  # leerlos crea un ciclo capacity <-> workshop que rompe el destroy de cualquier estado.
+  # Por eso los usuarios tienen que existir antes que la capacity (ver docs/workshop.md).
+  workshop_capacity_admins = var.workshop_attendees_capacity_admins && var.template == "workshop" ? [
+    for i in range(length(local.workshop_attendees)) : "user${i + 1}-${var.project_name}@${var.workshop_tenant_domain}"
+  ] : []
 
   effective_capacity_admins = distinct(concat(
     var.capacity_admin_members,
