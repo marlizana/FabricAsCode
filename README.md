@@ -223,9 +223,25 @@ la capacity de la demo 1. Crea `userN-workshopgit26@<dominio>`, `ws-workshopgit2
 
 ```powershell
 .\scripts\demo.ps1 taller           # plan con 20 alumnos
-.\scripts\demo.ps1 taller-apply     # apply con 3
+.\scripts\demo.ps1 taller-apply     # apply con 3 (taller-apply 20: con los 20)
 .\scripts\demo.ps1 taller-alumnos   # usuarios y workspaces; passwords a credenciales-netcoreconf.json
 .\scripts\demo.ps1 taller-limpia
+```
+
+En directo, desde GitHub Actions: el workflow **Terraform en directo**
+(`.github/workflows/terraform-directo.yml`) crea el medallion de un proyecto con el nombre
+que diga el publico (`environments/netcoreconf-directo.tfvars`, solo DEV) sobre la capacity
+de la demo 1, que busca por nombre. Estado remoto en Azure Storage, un blob por proyecto;
+la storage account la crea el propio workflow la primera vez.
+
+- Secrets: `FABRIC_CLIENT_ID`, `FABRIC_CLIENT_SECRET`, `FABRIC_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`.
+- Entorno `netcoreconf-directo` con revisores: el run se para despues del plan hasta que
+  alguien aprueba, y entonces aplica exactamente ese plan.
+- `accion = destroy` con el mismo nombre borra lo de ese proyecto.
+
+```powershell
+.\scripts\demo.ps1 capacity   # la capacity que va a usar el workflow, y si esta encendida
+.\scripts\demo.ps1 directo    # abre la pagina del workflow: Run workflow
 ```
 
 Capas y entornos son variables (`layers`, `environments`); `project_name` no tiene

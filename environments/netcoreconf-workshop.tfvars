@@ -26,6 +26,7 @@ admin_group_members = [
 
 # Obligatorias en la raiz pero sin efecto aqui (no se crea capacity ni budget).
 capacity_name = "fbcnetcoreconf"
+capacity_sku  = "F2"
 region        = "spaincentral"
 budget_amount = 0
 

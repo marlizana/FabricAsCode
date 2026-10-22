@@ -1,0 +1,175 @@
+name: Terraform en directo
+
+# NetCoreConf: el publico elige el nombre de un proyecto y este workflow le crea su
+# medallion (environments/netcoreconf-directo.tfvars) sobre la capacity de la demo grabada.
+#
+#   1. plan   : calcula el plan y lo resume en la pagina del run
+#   2. apply  : espera la aprobacion del entorno "netcoreconf-directo" (si tiene revisores)
+#               y aplica EXACTAMENTE el plan del paso 1
+#
+# accion=destroy hace lo mismo con un plan de borrado. Estado remoto en Azure Storage:
+# un blob por proyecto (terraform workspace = nombre del proyecto).
+#
+# Secrets: FABRIC_CLIENT_ID, FABRIC_CLIENT_SECRET, FABRIC_TENANT_ID, AZURE_SUBSCRIPTION_ID.
+# Variables opcionales: FABRIC_CAPACITY_ID (si no, se busca por nombre), FABRIC_CAPACITY_PREFIX,
+# TFSTATE_RESOURCE_GROUP, TFSTATE_STORAGE_ACCOUNT, TFSTATE_REGION, PROYECTOS_RESERVADOS.
+
+run-name: "${{ inputs.accion }} · ${{ inputs.proyecto }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      proyecto:
+        description: "Nombre del proyecto (lo dice el publico; se pasa a minusculas sin tildes ni espacios)"
+        required: true
+        type: string
+      accion:
+        description: "apply crea, plan solo mira, destroy borra lo de ese proyecto"
+        required: true
+        type: choice
+        options: [apply, plan, destroy]
+        default: apply
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-directo
+  cancel-in-progress: false
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+  FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+  FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  VAR_FILE: environments/netcoreconf-directo.tfvars
+  TFSTATE_RG: ${{ vars.TFSTATE_RESOURCE_GROUP }}
+  TFSTATE_SA: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+  TFSTATE_REGION: ${{ vars.TFSTATE_REGION }}
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    outputs:
+      proyecto: ${{ steps.nombre.outputs.proyecto }}
+      cambios: ${{ steps.plan.outputs.cambios }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Comprobar secrets
+        run: |
+          for v in ARM_CLIENT_ID ARM_CLIENT_SECRET ARM_TENANT_ID ARM_SUBSCRIPTION_ID; do
+            [[ -n "${!v}" ]] || { echo "::error title=Falta un secret::$v vacio. Revisa Settings > Secrets and variables > Actions (FABRIC_CLIENT_ID, FABRIC_CLIENT_SECRET, FABRIC_TENANT_ID, AZURE_SUBSCRIPTION_ID)"; exit 1; }
+          done
+
+      - name: Nombre del proyecto
+        id: nombre
+        env:
+          RAW: ${{ inputs.proyecto }}
+          PROYECTOS_RESERVADOS: ${{ vars.PROYECTOS_RESERVADOS || 'ventas' }}
+        run: bash .github/scripts/tf-directo.sh nombre "$RAW"
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+
+      - name: Estado remoto e init
+        run: bash .github/scripts/tf-directo.sh backend "${{ steps.nombre.outputs.proyecto }}"
+
+      - name: Capacity de la demo grabada
+        id: capacity
+        env:
+          FABRIC_CAPACITY_ID: ${{ vars.FABRIC_CAPACITY_ID }}
+          CAPACITY_PREFIX: ${{ vars.FABRIC_CAPACITY_PREFIX || 'fbcnetcoreconf' }}
+        run: bash .github/scripts/tf-directo.sh capacity
+
+      - name: terraform plan
+        id: plan
+        env:
+          PROYECTO: ${{ steps.nombre.outputs.proyecto }}
+          CAPACITY_ID: ${{ steps.capacity.outputs.capacity_id }}
+          ACCION: ${{ inputs.accion }}
+        run: |
+          extra=()
+          [[ "$ACCION" == "destroy" ]] && extra=(-destroy)
+          set +e
+          terraform plan -input=false -no-color -parallelism=8 -detailed-exitcode \
+            -var-file="$VAR_FILE" -var="project_name=$PROYECTO" -var="existing_capacity_id=$CAPACITY_ID" \
+            "${extra[@]}" -out=tfplan | tee plan.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          [[ $rc -eq 1 ]] && exit 1
+          echo "cambios=$([[ $rc -eq 2 ]] && echo si || echo no)" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Plan de «$PROYECTO» ($ACCION)"
+            echo
+            echo '```'
+            grep -E '^(Plan:|No changes)' plan.txt || true
+            echo '```'
+            if [[ "$ACCION" != "destroy" ]]; then
+              echo "### Workspaces"
+              terraform show -json tfplan | jq -r '.resource_changes[]
+                | select(.type == "fabric_workspace" and (.change.actions | index("create")))
+                | "- \(.change.after.display_name)"'
+            fi
+            echo
+            echo "<details><summary>Plan completo</summary>"
+            echo
+            echo '```'
+            sed -n '/Terraform will perform/,$p' plan.txt
+            echo '```'
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar el plan
+        if: steps.plan.outputs.cambios == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ steps.nombre.outputs.proyecto }}
+          path: tfplan
+          retention-days: 1
+
+  apply:
+    name: Apply
+    needs: plan
+    if: inputs.accion != 'plan' && needs.plan.outputs.cambios == 'si'
+    runs-on: ubuntu-latest
+    # Con revisores en Settings > Environments, el run se para aqui hasta que alguien apruebe.
+    environment: netcoreconf-directo
+    env:
+      PROYECTO: ${{ needs.plan.outputs.proyecto }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+
+      - name: Estado remoto e init
+        run: bash .github/scripts/tf-directo.sh backend "$PROYECTO"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tfplan-${{ needs.plan.outputs.proyecto }}
+
+      - name: terraform apply
+        run: terraform apply -input=false -no-color -parallelism=8 tfplan
+
+      - name: Resumen
+        if: inputs.accion == 'apply'
+        run: |
+          {
+            echo "## «$PROYECTO» creado"
+            echo
+            terraform output -json workspace_ids | jq -r --arg p "$PROYECTO" \
+              'to_entries[] | "- [\($p)-\(.key)](https://app.fabric.microsoft.com/groups/\(.value))"'
+          } >> "$GITHUB_STEP_SUMMARY"

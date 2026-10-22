@@ -23,8 +23,8 @@ environments = ["dev", "test", "prod"] # en directo: demo.ps1 qa anade "qa"
 enable_github_cicd = false
 github_owner       = "marlizana"
 
-budget_amount = 50
-# budget_contact_emails: en personal.auto.tfvars (no se commitea)
+# Sin budget en la charla: pedia correos y no aporta a la demo.
+budget_amount = 0
 
 tags = {
   managed_by = "terraform"
