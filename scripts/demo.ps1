@@ -80,6 +80,25 @@ function Tf {
   finally { Pop-Location }
 }
 
+# terraform pide el "yes" leyendo de la consola, y en algunas terminales (PowerShell con
+# conda, la de VS Code) le llega vacio y cancela. Por eso: plan a fichero, confirmacion con
+# Read-Host de PowerShell y apply de exactamente ese plan.
+$script:Aplicado = $false
+function TfPlanApply {
+  param([string[]]$PlanArgs)
+  $script:Aplicado = $false
+  $plan = Join-Path $Root ".demo.tfplan"
+  Tf (@("plan", "-input=false", "-out=$plan") + $PlanArgs)
+  $ok = (Read-Host "`n¿Aplicar este plan? Escribe yes para seguir").Trim()
+  if ($ok -ne "yes") {
+    Remove-Item $plan -Force -ErrorAction SilentlyContinue
+    Say "Cancelado: no se ha tocado nada." "Yellow"
+    return
+  }
+  try { Tf @("apply", "-input=false", "-parallelism=$Par", $plan); $script:Aplicado = $true }
+  finally { Remove-Item $plan -Force -ErrorAction SilentlyContinue }
+}
+
 function Require-Env {
   if (-not $env:ARM_CLIENT_SECRET -or $env:ARM_CLIENT_SECRET.Length -lt 20) {
     throw "Falta el secret del SP. Ejecuta antes: .\scripts\demo.ps1 env"
@@ -97,7 +116,7 @@ function Load-Project {
 # Ejecuta terraform en el estado de la demo 2 con la capacity de la demo 1 y vuelve al estado
 # "netcoreconf" al acabar, pase lo que pase.
 function Taller {
-  param([string[]]$TfArgs)
+  param([string[]]$TfArgs, [switch]$Confirmar)
   Require-Env
   Push-Location $Root
   try {
@@ -106,8 +125,25 @@ function Taller {
     if (-not $cap) { throw "No hay capacity en '$TfWs'. Antes: .\scripts\demo.ps1 prepara" }
     $env:TF_VAR_existing_capacity_id = $cap
     & terraform workspace select -or-create $TallerWs | Out-Null
-    & terraform @TfArgs
-    if ($LASTEXITCODE -ne 0) { throw "terraform $($TfArgs[0]) fallo" }
+    if ($Confirmar) {
+      # Igual que TfPlanApply: plan a fichero, "yes" con Read-Host y apply de ese plan.
+      $plan = Join-Path $Root ".demo-taller.tfplan"
+      & terraform plan -input=false "-out=$plan" @TfArgs
+      if ($LASTEXITCODE -ne 0) { throw "terraform plan fallo" }
+      $ok = (Read-Host "`n¿Aplicar este plan? Escribe yes para seguir").Trim()
+      if ($ok -eq "yes") {
+        & terraform apply -input=false "-parallelism=$Par" $plan
+        $rc = $LASTEXITCODE
+        Remove-Item $plan -Force -ErrorAction SilentlyContinue
+        if ($rc -ne 0) { throw "terraform apply fallo" }
+      } else {
+        Remove-Item $plan -Force -ErrorAction SilentlyContinue
+        Say "Cancelado: no se ha tocado nada." "Yellow"
+      }
+    } else {
+      & terraform @TfArgs
+      if ($LASTEXITCODE -ne 0) { throw "terraform $($TfArgs[0]) fallo" }
+    }
   } finally {
     Remove-Item Env:\TF_VAR_existing_capacity_id -ErrorAction SilentlyContinue
     & terraform workspace select $TfWs | Out-Null
@@ -202,7 +238,7 @@ switch ($Accion) {
   }
   "proyecto" { Ask-Project; Say "Proyecto: $($env:TF_VAR_project_name)" "Yellow" }
   "plan"     { Require-Env; Load-Project; Tf (@("plan") + (VarArgs) + @("-parallelism=$Par")) }
-  "apply"    { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-parallelism=$Par")) }
+  "apply"    { Require-Env; Load-Project; TfPlanApply ((VarArgs) + @("-parallelism=$Par")) }
   "qa" {
     Require-Env; Load-Project
     Set-Content -Path $QaFlag -Value "qa"
@@ -220,10 +256,10 @@ switch ($Accion) {
   "taller-apply"  {
     $n = if ($Arg) { [int]$Arg } else { 3 }
     Say "Apply con $n alumnos" "Yellow"
-    Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=$n", "-parallelism=$Par")
+    Taller -Confirmar @("-var-file=$TallerVars", "-var=workshop_attendee_count=$n", "-parallelism=$Par")
   }
   # destroy borra todo lo que hay en el estado del taller, con 3 alumnos o con 20
-  "taller-limpia" { Taller @("destroy", "-var-file=$TallerVars", "-parallelism=$Par") }
+  "taller-limpia" { Taller -Confirmar @("-destroy", "-var-file=$TallerVars", "-parallelism=$Par") }
   "directo" {
     Start-Process "https://github.com/marlizana/FabricAsCode/actions/workflows/terraform-directo.yml"
     Say "Run workflow > proyecto = el nombre que diga el publico > accion = apply > Run workflow" "Yellow"
@@ -242,8 +278,8 @@ switch ($Accion) {
     $c.PSObject.Properties | ForEach-Object { [pscustomobject]@{ alumno = $_.Name; usuario = $_.Value.upn; workspace = $_.Value.workspace } } | Format-Table -AutoSize
     Say "Passwords en $TallerCreds (no se enseñan en pantalla, no se commitean)" "Yellow"
   }
-  "prepara"  { Require-Env; Load-Project; Tf (@("apply") + (VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
-  "limpia"   { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-target=module.medallion_cicd", "-parallelism=$Par")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
-  "destroy"  { Require-Env; Load-Project; Tf (@("destroy") + (VarArgs) + @("-parallelism=$Par")); Remove-Item $QaFlag -ErrorAction SilentlyContinue }
+  "prepara"  { Require-Env; Load-Project; TfPlanApply ((VarArgs) + @("-target=module.capacity", "-target=azurerm_consumption_budget_subscription.this")) }
+  "limpia"   { Require-Env; Load-Project; TfPlanApply (@("-destroy") + (VarArgs) + @("-target=module.medallion_cicd", "-parallelism=$Par")); if ($script:Aplicado) { Remove-Item $QaFlag -ErrorAction SilentlyContinue } }
+  "destroy"  { Require-Env; Load-Project; TfPlanApply (@("-destroy") + (VarArgs) + @("-parallelism=$Par")); if ($script:Aplicado) { Remove-Item $QaFlag -ErrorAction SilentlyContinue } }
   default    { $h = Get-Content $PSCommandPath; $end = [array]::IndexOf($h, "#>"); $h[1..($end - 1)] }
 }
