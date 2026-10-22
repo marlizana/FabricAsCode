@@ -33,8 +33,8 @@
     capacity     Nombre, ID de Fabric y estado de la capacity (lo que el workflow va a usar)
 
   Preparar y limpiar
-    prepara      Crea solo la capacity y el budget (antes de la charla; luego el plan da 81)
-    limpia       Borra workspaces, grupos y roles; deja capacity y budget (entre ensayos)
+    prepara      Crea solo la capacity (antes de la charla; luego el plan da 81)
+    limpia       Borra workspaces, grupos y roles; deja la capacity (entre ensayos)
     destroy      Borra todo lo de esta sesion (capacity incluida)
 #>
 param(
