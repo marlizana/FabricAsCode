@@ -4,7 +4,7 @@
 #
 # Crea, por alumno N:
 #   usuario  userN-workshopgit26@akanemar.onmicrosoft.com  (password aleatoria)
-#   workspace ws-workshopgit26-userN, con ese usuario como Admin y nadie mas
+#   workspace ws-workshopgit26-userN, con ese usuario y las ponentes como Admin
 # y el espacio comun ws-workshopgit26-team (alumnos Contributor, ponentes Admin).
 #
 # Uso: .\scripts\demo.ps1 taller        (plan con 20 alumnos)
