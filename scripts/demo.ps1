@@ -24,16 +24,23 @@
 
   Demo 2: el workshop (estado "netcoreconf-workshop", usa la capacity de la demo 1)
     taller          plan con 20 alumnos (ws-workshopgit26-userN, userN-workshopgit26)
-    taller-apply    apply con 3 alumnos (el plan de 20 ya se ha visto)
+    taller-apply [N] apply con N alumnos (3 si no se indica). Grabacion: .\scripts\demo.ps1 taller-apply 20
     taller-alumnos  Lista usuarios y workspaces; guarda las passwords en credenciales-netcoreconf.json
     taller-limpia   destroy de la demo 2 (usuarios, workspaces y grupo)
+
+  Demo en directo desde GitHub Actions (workflow terraform-directo.yml)
+    directo      Abre en el navegador la pagina del workflow para lanzarlo con el nombre del publico
+    capacity     Nombre, ID de Fabric y estado de la capacity (lo que el workflow va a usar)
 
   Preparar y limpiar
     prepara      Crea solo la capacity y el budget (antes de la charla; luego el plan da 81)
     limpia       Borra workspaces, grupos y roles; deja capacity y budget (entre ensayos)
     destroy      Borra todo lo de esta sesion (capacity incluida)
 #>
-param([Parameter(Position = 0)][string]$Accion = "help")
+param(
+  [Parameter(Position = 0)][string]$Accion = "help",
+  [Parameter(Position = 1)][string]$Arg = ""
+)
 
 $ErrorActionPreference = "Stop"
 $Root    = Split-Path -Parent $PSScriptRoot
@@ -166,8 +173,6 @@ switch ($Accion) {
     $env:ARM_CLIENT_SECRET = (Get-Clipboard).Trim(); $env:FABRIC_CLIENT_SECRET = $env:ARM_CLIENT_SECRET
     # Fabric CLI (fab) con el mismo service principal, sin "fab auth login"
     $env:FAB_SPN_CLIENT_ID = $ClientId; $env:FAB_SPN_CLIENT_SECRET = $env:ARM_CLIENT_SECRET; $env:FAB_TENANT_ID = $TenantId
-    # Fabric CLI (fab) con el mismo service principal, sin "fab auth login"
-    $env:FAB_SPN_CLIENT_ID = $ClientId; $env:FAB_SPN_CLIENT_SECRET = $env:ARM_CLIENT_SECRET; $env:FAB_TENANT_ID = $TenantId
     Read-Host "Copia el PAT de GitHub y pulsa Enter" | Out-Null
     $env:GITHUB_TOKEN = (Get-Clipboard).Trim()
     Set-Clipboard -Value "---"
@@ -212,8 +217,25 @@ switch ($Accion) {
   "reanuda"  { Capacity-Call "resume" }
   "pausa"    { Capacity-Call "suspend" }
   "taller"        { Taller @("plan", "-var-file=$TallerVars", "-parallelism=$Par") }
-  "taller-apply"  { Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=3", "-parallelism=$Par") }
-  "taller-limpia" { Taller @("destroy", "-var-file=$TallerVars", "-var=workshop_attendee_count=3", "-parallelism=$Par") }
+  "taller-apply"  {
+    $n = if ($Arg) { [int]$Arg } else { 3 }
+    Say "Apply con $n alumnos" "Yellow"
+    Taller @("apply", "-var-file=$TallerVars", "-var=workshop_attendee_count=$n", "-parallelism=$Par")
+  }
+  # destroy borra todo lo que hay en el estado del taller, con 3 alumnos o con 20
+  "taller-limpia" { Taller @("destroy", "-var-file=$TallerVars", "-parallelism=$Par") }
+  "directo" {
+    Start-Process "https://github.com/marlizana/FabricAsCode/actions/workflows/terraform-directo.yml"
+    Say "Run workflow > proyecto = el nombre que diga el publico > accion = apply > Run workflow" "Yellow"
+  }
+  "capacity" {
+    Push-Location $Root
+    try {
+      $name = (& terraform output -raw capacity_name); $id = (& terraform output -raw capacity_id)
+    } finally { Pop-Location }
+    Say "Capacity: $name · ID de Fabric: $id" "Green"
+    Capacity-Call "get"
+  }
   "taller-alumnos" {
     Taller @("output", "-json", "workshop_credentials") | Set-Content -Path $TallerCreds -Encoding UTF8
     $c = Get-Content $TallerCreds -Raw | ConvertFrom-Json
