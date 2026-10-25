@@ -2,17 +2,18 @@
 #
 # Por asistente (N = 1, 2, 3...):
 #   - Usuario de Entra ID  userN-<prefix>@<dominio>  (password inicial aleatoria)
-#   - Workspace Fabric     ws-<prefix>-userN         (Admin: ese usuario y las ponentes)
+#   - Workspace Fabric     ws-<prefix>-userN         (Admin: ese usuario y sg-<prefix>-admins)
 #   - Repo GitHub privado  <prefix>-userN            (opcional: create_repos; en el taller lo crea cada uno)
 # Compartido:
 #   - Grupo de Entra       sg-<prefix>-attendees
+#   - Grupo de Entra       sg-<prefix>-admins        (ponentes: Admin de todos los workspaces)
 #   - (opcional) los asistentes entran tambien en un grupo persistente con permiso para
 #     crear workspaces (tenant setting). Hace falta para "Branch out" a un workspace nuevo.
-#   - Workspace Fabric     ws-<prefix>-team          (grupo como Contributor, facilitadoras Admin)
+#   - Workspace Fabric     ws-<prefix>-team          (asistentes Contributor, sg-<prefix>-admins Admin)
 #   - Repo GitHub          <prefix>-team             (opcional: create_team_repo; main protegida)
 #
 # Ningun alumno ve el workspace ni el repo de otro: cada workspace tiene como Admin a su
-# dueno, a las ponentes (facilitator_object_ids) y a la identidad que ejecuta Terraform
+# dueno, al grupo de ponentes (sg-<prefix>-admins) y a la identidad que ejecuta Terraform
 # (por crearlo); los repos privados solo tienen a su asistente.
 
 locals {
@@ -56,6 +57,15 @@ resource "azuread_group" "attendees" {
   members          = [for u in azuread_user.attendee : u.object_id]
 }
 
+# Ponentes: Admin de todos los workspaces del taller (ver mas abajo).
+resource "azuread_group" "admins" {
+  display_name     = "sg-${var.prefix}-admins"
+  description      = "Ponentes del workshop: Admin de todos los workspaces"
+  security_enabled = true
+  owners           = var.group_owners
+  members          = var.facilitator_object_ids
+}
+
 # Grupo que NO gestiona este modulo: existe antes del taller y esta en el tenant setting
 # "Users can create Fabric workspaces". El grupo sg-<prefix>-attendees no sirve para eso:
 # se crea y se borra con cada apply/destroy y su object ID cambia.
@@ -88,20 +98,18 @@ resource "fabric_workspace_role_assignment" "attendee" {
   }
 }
 
-# Las ponentes (facilitator_object_ids) tambien son Admin de cada workspace de alumno,
-# para poder entrar a ayudar. Los alumnos siguen sin ver el de los demas.
-resource "fabric_workspace_role_assignment" "attendee_facilitators" {
-  for_each = {
-    for pair in setproduct(keys(local.attendees), var.facilitator_object_ids) :
-    "${pair[0]}-${pair[1]}" => { attendee = pair[0], object_id = pair[1] }
-  }
+# Las ponentes entran por un grupo, sg-<prefix>-admins, que es Admin de cada workspace de
+# alumno y del team. Para sumar o quitar a alguien basta con tocar el grupo, no 21 workspaces.
+# Los alumnos siguen sin ver el workspace de los demas.
+resource "fabric_workspace_role_assignment" "attendee_admins" {
+  for_each = local.attendees
 
-  workspace_id = fabric_workspace.attendee[each.value.attendee].id
+  workspace_id = fabric_workspace.attendee[each.key].id
   role         = "Admin"
 
   principal = {
-    id   = each.value.object_id
-    type = "User"
+    id   = azuread_group.admins.object_id
+    type = "Group"
   }
 }
 
@@ -121,15 +129,13 @@ resource "fabric_workspace_role_assignment" "team" {
   }
 }
 
-resource "fabric_workspace_role_assignment" "facilitators" {
-  for_each = toset(var.facilitator_object_ids)
-
+resource "fabric_workspace_role_assignment" "team_admins" {
   workspace_id = fabric_workspace.team.id
   role         = "Admin"
 
   principal = {
-    id   = each.value
-    type = "User"
+    id   = azuread_group.admins.object_id
+    type = "Group"
   }
 }
 

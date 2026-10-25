@@ -11,11 +11,13 @@ Authenticator, trial de Power BI Pro y cuenta de GitHub, que les ayudamos a crea
 | Por asistente (`userN`) | Compartido (`team`) |
 |---|---|
 | Usuario de Entra `userN-gitws@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-attendees` con todos |
-| Workspace Fabric `ws-gitws-userN`: solo esa persona (Admin) | Workspace `ws-gitws-team`: el grupo como Contributor, facilitadoras como Admin |
+| Workspace Fabric `ws-gitws-userN`: esa persona y `sg-gitws-admins` (Admin) | Workspace `ws-gitws-team`: el grupo como Contributor, `sg-gitws-admins` como Admin |
+| | Grupo `sg-gitws-admins`: las ponentes (`admin_group_members`) |
 | Repo GitHub **privado** que crea cada persona en su cuenta (ejercicio 1) | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
 | README con los ejercicios (`workshop/seed/`) | El mismo README |
 
-Aislamiento: nadie tiene rol en el workspace de otra persona ni acceso a su repo.
+Aislamiento: ningún alumno tiene rol en el workspace de otra persona ni acceso a su repo. Las ponentes
+entran en todos por `sg-gitws-admins`; para sumar a alguien, se añade al grupo y no hay que tocar los workspaces.
 La identidad que ejecuta Terraform queda como Admin de todo, porque lo crea.
 
 ## Requisitos extra del service principal
