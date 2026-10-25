@@ -16,8 +16,14 @@ region       = "spaincentral"
 template     = "workshop"
 project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-team
 
-workshop_tenant_domain          = "akanemar.onmicrosoft.com"
-workshop_facilitator_object_ids = ["<object-id-de-mar.lizana>"]
+workshop_tenant_domain = "akanemar.onmicrosoft.com"
+
+# Ponentes: entran en sg-gitws-admins, que es Admin de los 20 ws-gitws-userN y de ws-gitws-team.
+# Tienen que existir en el tenant (el plan falla si alguno no existe).
+admin_group_members = [
+  "ponente-1@akanemar.onmicrosoft.com",
+  "ponente-2@akanemar.onmicrosoft.com",
+]
 
 # Cada alumno crea su propio repo privado en el ejercicio 1: aqui solo el repo team.
 workshop_create_repos     = false
@@ -45,8 +51,8 @@ workshop_attendee_count = 20
 enable_github_cicd = false
 github_owner       = "marlizana"
 
-budget_amount         = 150
-budget_contact_emails = ["tu-correo@ejemplo.com"]
+# Sin budget: daba mas problemas que soluciones. Pausar la capacity cuando no se use.
+budget_amount = 0
 
 tags = {
   managed_by = "terraform"

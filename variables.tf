@@ -61,7 +61,7 @@ variable "existing_capacity_id" {
 }
 
 variable "admin_group_members" {
-  description = "UPNs de personas que se anaden como miembros de TODOS los grupos Admin (sg-fbc-*-admin) que crea Terraform."
+  description = "UPNs de personas que se anaden como miembros de TODOS los grupos Admin que crea Terraform (sg-fbc-*-admin; en el workshop, sg-<prefix>-admins)."
   type        = list(string)
   default     = []
 }
@@ -215,7 +215,7 @@ variable "workshop_attendees_capacity_admins" {
 }
 
 variable "workshop_facilitator_object_ids" {
-  description = "Object IDs de facilitadores con Admin en el workspace compartido."
+  description = "Object IDs extra de ponentes (se suman a admin_group_members) en sg-<prefix>-admins del workshop."
   type        = list(string)
   default     = []
 }

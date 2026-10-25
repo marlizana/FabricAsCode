@@ -33,7 +33,7 @@ variable "group_owners" {
 }
 
 variable "facilitator_object_ids" {
-  description = "Object IDs de facilitadores (usuarios) con Admin en el workspace compartido y en el de cada alumno."
+  description = "Object IDs de las ponentes: miembros de sg-<prefix>-admins, Admin de todos los workspaces del taller."
   type        = list(string)
   default     = []
 }
