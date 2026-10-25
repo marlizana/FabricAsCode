@@ -84,13 +84,24 @@ function Tf {
 # conda, la de VS Code) le llega vacio y cancela. Por eso: plan a fichero, confirmacion con
 # Read-Host de PowerShell y apply de exactamente ese plan.
 $script:Aplicado = $false
+
+# Pregunta "yes". Antes vacia el teclado: un pegado con salto de linea de mas dejaba un
+# Enter en cola que contestaba solo. Una respuesta vacia se vuelve a preguntar (3 veces).
+function Confirmar {
+  try { $Host.UI.RawUI.FlushInputBuffer() } catch { }
+  for ($i = 0; $i -lt 3; $i++) {
+    $r = Read-Host "`n¿Aplicar este plan? Escribe yes para seguir (no para cancelar)"
+    if ($r -and $r.Trim()) { return ($r.Trim() -eq "yes") }
+  }
+  return $false
+}
+
 function TfPlanApply {
   param([string[]]$PlanArgs)
   $script:Aplicado = $false
   $plan = Join-Path $Root ".demo.tfplan"
   Tf (@("plan", "-input=false", "-out=$plan") + $PlanArgs)
-  $ok = (Read-Host "`n¿Aplicar este plan? Escribe yes para seguir").Trim()
-  if ($ok -ne "yes") {
+  if (-not (Confirmar)) {
     Remove-Item $plan -Force -ErrorAction SilentlyContinue
     Say "Cancelado: no se ha tocado nada." "Yellow"
     return
@@ -130,8 +141,7 @@ function Taller {
       $plan = Join-Path $Root ".demo-taller.tfplan"
       & terraform plan -input=false "-out=$plan" @TfArgs
       if ($LASTEXITCODE -ne 0) { throw "terraform plan fallo" }
-      $ok = (Read-Host "`n¿Aplicar este plan? Escribe yes para seguir").Trim()
-      if ($ok -eq "yes") {
+      if (Confirmar) {
         & terraform apply -input=false "-parallelism=$Par" $plan
         $rc = $LASTEXITCODE
         Remove-Item $plan -Force -ErrorAction SilentlyContinue
