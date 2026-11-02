@@ -40,9 +40,9 @@ juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta d
 1. En GitHub, en `workshop-git`: **Settings → General → Pull Requests**. Deja marcada solo
    **Allow squash merging** y marca **Automatically delete head branches**.
 2. En `ws-gitws-userN`: **Source control → Branch out** a un workspace nuevo, rama `feature/margen`.
-   Marca **Select items individually**, elige el modelo semántico y pulsa **Select related items**.
-3. En el workspace nuevo, haz dos commits pequeños: una medida nueva (`feat: añade la medida de margen`)
-   y su formato (`fix: formato de la medida de margen`).
+   Marca **Select items individually**, elige el informe y pulsa **Select related items**.
+3. En el workspace nuevo, haz dos commits pequeños: añade una tarjeta (`feat: añade la tarjeta de festivos`)
+   y cambia el título de la página (`fix: título de la página de festivos`).
 4. En GitHub, pull request hacia `main` y **Squash and merge**: en `main` queda un solo commit.
 5. En `ws-gitws-userN`, **Update all**. Después borra el workspace de la feature:
    **Workspace settings → General → Remove this workspace**.
