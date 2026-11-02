@@ -59,8 +59,9 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 
 ### Branch out: crear workspaces y asignarlos a la capacity
 
-Branch out a un workspace nuevo (ejercicios 4 y 6) crea un workspace con la identidad del
-alumno. Necesita dos permisos que un usuario recién creado no tiene:
+Branch out a un workspace nuevo (ejercicios 4, 5 y 6) y desplegar a una etapa vacía de un
+deployment pipeline (ejercicio 8) crean un workspace con la identidad del
+alumno. Necesitan dos permisos que un usuario recién creado no tiene:
 
 1. **Crear workspaces.** En el tenant, el setting está limitado a grupos. Una sola vez:
    ```powershell
@@ -92,16 +93,21 @@ Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a 
 
 | Hora | Bloque | Ejercicio |
 |---|---|---|
-| 10:00-10:30 | Puesta a punto: usuario, MFA, trial de Pro y cuenta de GitHub | — |
-| 10:30-10:50 | Fundamentos: repo, commit, rama, merge, PR (con el dibujo de la rama) | — |
-| 10:50-11:20 | Conectar el workspace a GitHub | 1 y 2 |
-| 11:20-11:45 | Las tripas: PBIP y TMDL | 3 (o demo si vamos tarde) |
-| 11:45-12:15 | Ramas y pull requests | 4 |
-| 12:15-12:30 | Descanso: invitar a todas a `gitws-team` | |
-| 12:30-13:15 | Repo común `gitws-team`, conflicto incluido | 5 |
-| 13:15-13:30 | Deshacer con Revert en el repo común | 6 |
-| 13:30-13:50 | Pasar entre entornos: variable libraries, deployment pipelines y fabric-cicd | Demo |
-| 13:50-14:00 | Novedades (deployment plans), si llegamos, y cierre | Demo |
+| 10:00-10:15 | Puesta a punto: usuario, MFA, trial de Pro y cuenta de GitHub | — |
+| 10:15-10:30 | Fundamentos: repo, commit, rama, merge, PR (con el dibujo de la rama) | — |
+| 10:30-10:50 | Conectar el workspace a GitHub | 1 y 2 |
+| 10:50-11:05 | Las tripas: PBIP y TMDL | 3 (o demo si vamos tarde) |
+| 11:05-11:30 | Ramas y pull requests | 4 |
+| 11:30-12:05 | Estrategias de Git y de ramas: merge, squash y rebase, GitHub Flow, GitFlow y trunk-based, Branch out a fondo | 5 |
+| 12:05-12:20 | Descanso: invitar a todas a `gitws-team` | |
+| 12:20-12:50 | Repo común `gitws-team`: conflicto y Revert | 6 y 7 |
+| 12:50-13:35 | Deployment pipelines: etapas, comparar, reglas, autobinding y permisos | 8 |
+| 13:35-13:50 | De dev a prod: las cuatro opciones de Microsoft, variable libraries y madurez | Demo |
+| 13:50-14:00 | Novedades y cierre | — |
+
+Limpieza extra por los ejercicios 5 y 8: cada alumna crea un workspace de feature (lo borra
+ella misma) y un deployment pipeline con su workspace de producción. Terraform no los conoce,
+así que antes del `destroy` hay que borrar los pipelines y los workspaces que queden.
 
 ## Coste orientativo
 
