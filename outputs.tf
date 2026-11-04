@@ -44,7 +44,12 @@ output "workshop_credentials" {
   value       = one(module.workshop[*].credentials)
 }
 
-output "workshop_team_repo_url" {
-  description = "Repo colaborativo del workshop."
-  value       = one(module.workshop[*].team_repo_url)
+output "workshop_team_repo_urls" {
+  description = "Repo comun de cada equipo del workshop."
+  value       = one(module.workshop[*].team_repo_urls)
+}
+
+output "workshop_teams" {
+  description = "Equipo -> asistentes del workshop."
+  value       = one(module.workshop[*].teams)
 }

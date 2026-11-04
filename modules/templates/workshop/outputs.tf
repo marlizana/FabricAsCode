@@ -1,8 +1,8 @@
 output "workspace_ids" {
-  description = "Mapa asistente -> workspace ID, mas 'team'."
+  description = "Mapa asistente -> workspace ID, mas uno por equipo."
   value = merge(
     { for k, w in fabric_workspace.attendee : k => w.id },
-    { team = fabric_workspace.team.id }
+    { for t, w in fabric_workspace.team : t => w.id }
   )
 }
 
@@ -16,13 +16,20 @@ output "credentials" {
       password  = random_password.attendee[k].result
       workspace = fabric_workspace.attendee[k].display_name
       repo      = var.create_repos ? github_repository.attendee[k].html_url : null
+      team      = local.attendee_team[k]
+      team_ws   = fabric_workspace.team[local.attendee_team[k]].display_name
     }
   }
 }
 
-output "team_repo_url" {
-  description = "Repo colaborativo."
-  value       = var.create_team_repo ? github_repository.team[0].html_url : null
+output "team_repo_urls" {
+  description = "Repo comun de cada equipo."
+  value       = { for t, r in github_repository.team : t => r.html_url }
+}
+
+output "teams" {
+  description = "Equipo -> asistentes (userN)."
+  value       = { for t in local.teams : t => sort([for k, x in local.attendee_team : k if x == t]) }
 }
 
 output "attendee_upns" {

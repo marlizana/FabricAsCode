@@ -169,8 +169,15 @@ variable "workshop_attendees" {
   type = list(object({
     name            = string
     github_username = optional(string, "")
+    team            = optional(string, "")
   }))
   default = []
+}
+
+variable "workshop_teams" {
+  description = "Equipos del workshop: cada uno con su workspace ws-<prefix>-<equipo> y su repo <prefix>-<equipo>. Los asistentes se reparten por bloques (o con su campo team)."
+  type        = list(string)
+  default     = ["team"]
 }
 
 variable "workshop_attendee_count" {
@@ -180,13 +187,13 @@ variable "workshop_attendee_count" {
 }
 
 variable "workshop_create_repos" {
-  description = "Crear un repo de GitHub por asistente y el repo team. En la demo de NetCoreConf va a false."
+  description = "Crear un repo de GitHub por asistente. En la demo de NetCoreConf va a false."
   type        = bool
   default     = true
 }
 
 variable "workshop_create_team_repo" {
-  description = "Crear el repo colaborativo del workshop."
+  description = "Crear el repo comun de cada equipo del workshop."
   type        = bool
   default     = true
 }

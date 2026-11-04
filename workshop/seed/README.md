@@ -1,14 +1,16 @@
 # Workshop: Git para gente de Power BI
 
-Este es el repo **común** del taller: aquí están los ejercicios y aquí trabajaremos todas
-juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta de GitHub.
+Este es el repo **común** del equipo de **{{equipo}}**: aquí están los ejercicios y aquí
+trabajaréis juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta de GitHub.
 
 ## Tus credenciales
 
 - Usuario de Fabric: el que te hemos dado en papel (`userN-gitws@akanemar.onmicrosoft.com`)
 - Workspace de Fabric: `ws-gitws-userN` (solo lo ves tú)
 - Repo personal: el que creas en el ejercicio 1
-- Repo colaborativo: `gitws-team`, este. Te invitamos en el descanso: acepta la invitación que llega por correo
+- Tu equipo: **{{equipo}}** (viene en tu tarjeta)
+- Repo común: `gitws-{{equipo}}`, este. Te invitamos en el descanso: acepta la invitación que llega por correo
+- Workspace común: `ws-gitws-{{equipo}}`. Solo lo ve tu equipo
 
 ## Ejercicios
 
@@ -49,21 +51,21 @@ juntas al final. Tu repo personal lo creas tú en el ejercicio 1, en tu cuenta d
 
 Si Branch out a un workspace nuevo da error de permisos: **Checkout new branch** en tu propio workspace.
 
-### 6 · Trabajo en equipo (repo `gitws-team`)
-`ws-gitws-team` ya está conectado a la rama `main` de este repo. `main` está protegida: sin PR aprobada no entra nada.
+### 6 · Trabajo en equipo (repo `gitws-{{equipo}}`)
+`ws-gitws-{{equipo}}` ya está conectado a la rama `main` de este repo. `main` está protegida: sin PR aprobada no entra nada.
 1. Crea un segundo token, esta vez **classic**: **Settings → Developer settings → Tokens (classic)**,
    scope **repo**, caducidad 7 días. El fine-grained del ejercicio 1 no sirve: GitHub no deja
    usarlos en repos de otra persona en los que eres colaboradora.
-2. En `ws-gitws-team`: **Source control → Accounts → Add account** con ese token y la URL de este repo.
+2. En `ws-gitws-{{equipo}}`: **Source control → Accounts → Add account** con ese token y la URL de este repo.
    Después **Source control → Branches → Branch out to another workspace** a tu rama (`team/<tu-nombre>`) y cambia **tu** página del informe.
 3. Commit y pull request hacia `main`.
 4. Revisa la PR de quien tengas al lado: lee el diff y apruébala. Con la aprobación, mergea la tuya.
 5. Provocamos un conflicto a propósito y lo resolvemos juntas.
 
-### 7 · Deshacer sin romper nada (repo `gitws-team`)
+### 7 · Deshacer sin romper nada (repo `gitws-{{equipo}}`)
 1. En GitHub abre **tu** pull request del ejercicio 6, ya mergeada, y pulsa **Revert**.
 2. Se crea una PR nueva que deshace la anterior: pide que te la aprueben y mergéala.
-3. En `ws-gitws-team`, **Source control → Updates → Update all**: tu página vuelve a como estaba.
+3. En `ws-gitws-{{equipo}}`, **Source control → Updates → Update all**: tu página vuelve a como estaba.
 4. Mira el historial de `main`: el cambio y su revert siguen ahí. No se ha borrado nada.
 
 Plan B si no llegaste a mergear en el ejercicio 6: haz el Revert de tu PR del ejercicio 4 en tu repo `workshop-git`.

@@ -92,6 +92,7 @@ module "workshop" {
   attendees              = local.workshop_attendees
   create_repos           = var.workshop_create_repos
   create_team_repo       = var.workshop_create_team_repo
+  teams                  = var.workshop_teams
   tenant_domain          = var.workshop_tenant_domain
   capacity_id            = local.capacity_id
   group_owners           = local.effective_group_owners

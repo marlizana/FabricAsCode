@@ -14,20 +14,25 @@ capacity_sku = "F8"
 region       = "spaincentral"
 
 template     = "workshop"
-project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-team
+project_name = "gitws" # -> userN-gitws@dominio, ws-gitws-userN, ws-gitws-ventas, ws-gitws-logistica
 
 workshop_tenant_domain = "akanemar.onmicrosoft.com"
 
-# Ponentes: entran en sg-gitws-admins, que es Admin de los 20 ws-gitws-userN y de ws-gitws-team.
+# Ponentes: entran en sg-gitws-admins, que es Admin de los 20 ws-gitws-userN y de los workspaces de cada equipo.
 # Tienen que existir en el tenant (el plan falla si alguno no existe).
 admin_group_members = [
   "ponente-1@akanemar.onmicrosoft.com",
   "ponente-2@akanemar.onmicrosoft.com",
 ]
 
-# Cada alumno crea su propio repo privado en el ejercicio 1: aqui solo el repo team.
+# Cada alumno crea su propio repo privado en el ejercicio 1: aqui solo los repos comunes.
 workshop_create_repos     = false
 workshop_create_team_repo = true
+
+# Dos equipos, cada uno con su grupo sg-gitws-<equipo>, su workspace ws-gitws-<equipo> y su
+# repo gitws-<equipo> (main protegida). Con 20 alumnos: user1-10 ventas, user11-20 logistica.
+# Para fijar el de alguien, team = "..." en workshop_attendees.
+workshop_teams = ["ventas", "logistica"]
 
 # Branch out a un workspace nuevo (ejercicios 4 y 6): cada alumno tiene que poder crear un
 # workspace y asignarlo a la capacity.
@@ -41,10 +46,10 @@ workshop_attendees_capacity_admins = true
 workshop_attendee_count = 20
 
 # Con lista (sustituye a workshop_attendee_count). github_username se rellena el dia del taller
-# y se re-aplica para invitarles a su repo y al repo team.
+# y se re-aplica para invitarles al repo comun de su equipo.
 # workshop_attendees = [
 #   { name = "Asistente Uno", github_username = "github-user-1" },
-#   { name = "Asistente Dos" },
+#   { name = "Asistente Dos", team = "logistica" },
 # ]
 
 # El repo de contenido de la demo no aplica al workshop.

@@ -8,15 +8,20 @@ Authenticator, trial de Power BI Pro y cuenta de GitHub, que les ayudamos a crea
 
 ## Qué se crea
 
-| Por asistente (`userN`) | Compartido (`team`) |
+| Por asistente (`userN`) | Por equipo (`ventas` y `logistica`) |
 |---|---|
-| Usuario de Entra `userN-gitws@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-attendees` con todos |
-| Workspace Fabric `ws-gitws-userN`: esa persona y `sg-gitws-admins` (Admin) | Workspace `ws-gitws-team`: el grupo como Contributor, `sg-gitws-admins` como Admin |
+| Usuario de Entra `userN-gitws@akanemar.onmicrosoft.com` con password aleatoria | Grupo `sg-gitws-<equipo>` con su mitad (`sg-gitws-attendees` sigue teniendo a todas) |
+| Workspace Fabric `ws-gitws-userN`: esa persona y `sg-gitws-admins` (Admin) | Workspace `ws-gitws-<equipo>`: el grupo del equipo como Contributor, `sg-gitws-admins` como Admin |
 | | Grupo `sg-gitws-admins`: las ponentes (`admin_group_members`) |
-| Repo GitHub **privado** que crea cada persona en su cuenta (ejercicio 1) | Repo `gitws-team`: todas como collaborators, `main` protegida con PR + 1 aprobación |
+| Repo GitHub **privado** que crea cada persona en su cuenta (ejercicio 1) | Repo `gitws-<equipo>`: las de ese equipo como collaborators, `main` protegida con PR + 1 aprobación |
 | README con los ejercicios (`workshop/seed/`) | El mismo README |
 
-Aislamiento: ningún alumno tiene rol en el workspace de otra persona ni acceso a su repo. Las ponentes
+Reparto: `workshop_teams = ["ventas", "logistica"]` y, con 20 alumnos, `user1`-`user10` van a ventas y
+`user11`-`user20` a logística (el equipo sale en `workshop_credentials`, para la tarjeta; `terraform output
+workshop_teams` da la lista). Cada README de repo común lleva el nombre de su equipo.
+
+Aislamiento: ningún alumno tiene rol en el workspace de otra persona ni acceso a su repo, y cada equipo
+solo ve su workspace y su repo común. Las ponentes
 entran en todos por `sg-gitws-admins`; para sumar a alguien, se añade al grupo y no hay que tocar los workspaces.
 La identidad que ejecuta Terraform queda como Admin de todo, porque lo crea.
 
@@ -39,7 +44,7 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
    tendrán que registrar Authenticator al entrar. Opciones:
    - Avisar y que lo registren en los primeros 10 minutos.
    - Desactivar los security defaults solo el día del taller y reactivarlos tras el destroy.
-3. **GitHub.** El repo compartido es público porque en cuentas Free la protección de ramas
+3. **GitHub.** Los repos comunes son públicos porque en cuentas Free la protección de ramas
    no existe en repos privados. Si se prefiere privado, crear una organización con plan Team
    o quitar la protección (`protect_team_main = false`).
 
@@ -50,10 +55,10 @@ Además de lo de la demo, para crear usuarios necesita el rol de Entra **User Ad
 | 1 semana antes | Una sola vez, para Branch out (ver abajo): crear el grupo `sg-fabric-workspace-creators` y añadirlo al tenant setting de crear workspaces |
 | 1 semana antes | Mail a asistentes (si la organizacion nos da la lista): traer movil para MFA y, si pueden, cuenta de GitHub |
 | 2/11 | `environments/workshop.tfvars` con `workshop_attendee_count = 20` y `terraform apply` desde un equipo sin Global Secure Access |
-| Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles a `gitws-team` (re-apply con `github_username` o desde GitHub) |
+| Durante la puesta a punto | Apuntar el usuario de GitHub de cada persona; en el descanso, invitarles al repo de su equipo (re-apply con `github_username` o desde GitHub) |
 | Día anterior | Probar con 2 usuarios: login, MFA, trial de Pro, conexión Git, commit, PR y **Branch out a un workspace nuevo** |
-| Día anterior | Preparar en `ws-gitws-team` un informe con una página por alumno (`user1`…`user20`) y hacer commit |
-| Día anterior | Mar conecta `ws-gitws-team` al repo `gitws-team`, rama `main`, carpeta `/` (los alumnos son Contributor y no pueden conectarlo) |
+| Día anterior | Preparar en `ws-gitws-ventas` un informe con una página por alumno de ventas (`user1`…`user10`) y en `ws-gitws-logistica` otro con las de logística (`user11`…`user20`); commit en cada uno |
+| Día anterior | Mar conecta `ws-gitws-ventas` a `gitws-ventas` y `ws-gitws-logistica` a `gitws-logistica`, rama `main`, carpeta `/` (los alumnos son Contributor y no pueden conectarlo) |
 | Día anterior | Imprimir credenciales (`terraform output -json workshop_credentials`) |
 | Al acabar | `terraform destroy` y, si se desactivaron, reactivar los security defaults |
 
@@ -99,8 +104,8 @@ Para quien se apunte tarde: añadirlo al final de la lista (para no renumerar a 
 | 10:50-11:05 | Las tripas: PBIP y TMDL | 3 (o demo si vamos tarde) |
 | 11:05-11:30 | Ramas y pull requests | 4 |
 | 11:30-12:05 | Estrategias de Git y de ramas: merge, squash y rebase, GitHub Flow, GitFlow y trunk-based, Branch out a fondo | 5 |
-| 12:05-12:20 | Descanso: invitar a todas a `gitws-team` | |
-| 12:20-12:50 | Repo común `gitws-team`: conflicto y Revert | 6 y 7 |
+| 12:05-12:20 | Descanso: invitar a cada una al repo de su equipo | |
+| 12:20-12:50 | Repos comunes `gitws-ventas` y `gitws-logistica`: conflicto y Revert | 6 y 7 |
 | 12:50-13:35 | Deployment pipelines: etapas, comparar, reglas, autobinding y permisos | 8 |
 | 13:35-13:50 | De dev a prod: las cuatro opciones de Microsoft, variable libraries y madurez | Demo |
 | 13:50-14:00 | Novedades y cierre | — |

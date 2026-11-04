@@ -1,5 +1,5 @@
 variable "prefix" {
-  description = "Prefijo: usuarios userN-<prefix>, workspaces ws-<prefix>-userN y ws-<prefix>-team, repos <prefix>-userN."
+  description = "Prefijo: usuarios userN-<prefix>, workspaces ws-<prefix>-userN y ws-<prefix>-<equipo>, repos <prefix>-userN y <prefix>-<equipo>."
   type        = string
 }
 
@@ -8,7 +8,19 @@ variable "attendees" {
   type = list(object({
     name            = string
     github_username = optional(string, "")
+    team            = optional(string, "")
   }))
+}
+
+variable "teams" {
+  description = "Equipos del trabajo en comun. Cada uno tiene su grupo, su workspace ws-<prefix>-<equipo> y su repo <prefix>-<equipo>."
+  type        = list(string)
+  default     = ["team"]
+
+  validation {
+    condition     = length(var.teams) > 0 && length(var.teams) == length(distinct(var.teams)) && alltrue([for t in var.teams : can(regex("^[a-z][a-z0-9]{1,19}$", t)) && t != "attendees" && t != "admins" && !can(regex("^user[0-9]+$", t))])
+    error_message = "teams: al menos uno, nombres unicos en minusculas, sin guiones ni tildes (ej. ventas, logistica), y distintos de attendees, admins y userN."
+  }
 }
 
 variable "tenant_domain" {
@@ -57,7 +69,7 @@ variable "create_repos" {
 }
 
 variable "create_team_repo" {
-  description = "Crear el repo colaborativo <prefix>-team (con el README de ejercicios)."
+  description = "Crear el repo comun de cada equipo, <prefix>-<equipo> (con el README de ejercicios)."
   type        = bool
   default     = true
 }
